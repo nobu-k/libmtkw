@@ -4,6 +4,7 @@
 #include <sstream>
 #include "profile.hpp"
 #include "manager.hpp"
+#include "util.hpp"
 
 namespace mtkw {
 namespace detail {
@@ -43,18 +44,40 @@ public:
   }
 
   template<typename T>
-  friend ProfilerMessenger& operator <<(ProfilerMessenger& m, const T& v) {
-    m.oss << v;
-    return m;
+  ProfilerMessenger& operator <<(const T& v) {
+    oss << v;
+    return *this;
   }
 };
 
 } // namespace detail
 
+inline int enableProfiler(bool e = true) {
+  return Manager::instance().enable(e);
+}
+
+inline int disableProfiler() {
+  return Manager::instance().disable();
+}
+
+inline ProfilePtr getCurrentProfile() {
+  return Manager::instance().getCurrentProfile();
+}
+
+inline ProfilePtr getLastProfile() {
+  return Manager::instance().getLastProfile();
+}
+
+// Macros to support profiling
 #define MTKW_PROFILE_N(name) \
-  if (detail::ScopedProfilter libmtkw_scoped_profiler_long_name_dayo_ = detail::ScopedProfiler(name)) {} else 
+  if (detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = detail::ScopedProfiler(name)) {} else 
 
 #define MTKW_PROFILE() MTKW_PROFILE_N(MTKW_CURRENT_FUNCTION)
+
+#define MTKW_SCOPED_PROFILE_N(name) \
+  detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = detail::ScopedProfiler(name)
+
+#define MTKW_SCOPED_PROFILE() MTKW_SCOPED_PROFILE_N(MTKW_CURRENT_FUNCTION)
 
 #define MTKW_MESSAGE() detail::ProfilerMessenger()
 

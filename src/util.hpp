@@ -21,9 +21,11 @@ namespace mtkw {
 #ifdef MTKW_PFI_INTERNAL
 using pfi::lang::shared_ptr;
 typedef pfi::lang::noncopyable noncopyable;
+#define MTKW_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #else
 using std::tr1::shared_ptr;
 // TODO: use noncopyable
+#define MTKW_CURRENT_FUNCTION "(unknown)"
 #endif
 
 // TODO: define unordered_map

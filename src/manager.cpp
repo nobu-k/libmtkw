@@ -18,9 +18,12 @@ int Manager::initialize(ThreadLocalStorage* storage) {
     LOG(ERROR) << "storage is NULL.";
     return -1;
   }
+
   if (_instance) {
-    LOG(ERROR) << "Manager is already initialized.";
-    return -1;
+    LOG(WARNING) << "Manager is already initialized. "
+                 << "Given ThreadLocalStorage will be deleted.";
+    delete storage;
+    return 0;
   }
 
   Manager* ist = new Manager();
