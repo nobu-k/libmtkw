@@ -3,12 +3,11 @@
 
 #include <string>
 #include "util.hpp"
+#include "profile.hpp"
 
 namespace mtkw {
 
-struct Profile;
-
-class ThreadLocalManager {
+class ThreadLocalManager : noncopyable {
 private:
   bool _enabled;
   ProfilePtr _profile;
@@ -25,6 +24,12 @@ public:
   int endProfile();
   int appendProfile(const ProfilePtr& p);
 
+  int setMessage(const std::string& msg);
+  int appendMessage(const std::string& msg);
+
+  ProfilePtr getCurrentProfile() const {
+    return _profile;
+  }
   ProfilePtr getLastProfile() const {
     return _last_profile;
   }

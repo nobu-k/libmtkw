@@ -4,8 +4,10 @@
 // TODO: support Visual C++
 #ifdef MTKW_PFI_INTERNAL
 #include <pficommon/lang/shared_ptr.h>
+#include <pficommon/lang/noncopyable.h>
 #else
 #include <tr1/memory>
+// TODO: include noncopyable
 #endif
 
 #if defined MTKW_PFI_INTERNAL || defined MTKW_WITH_GLOG
@@ -18,8 +20,10 @@ namespace mtkw {
 
 #ifdef MTKW_PFI_INTERNAL
 using pfi::lang::shared_ptr;
+typedef pfi::lang::noncopyable noncopyable;
 #else
 using std::tr1::shared_ptr;
+// TODO: use noncopyable
 #endif
 
 // TODO: define unordered_map

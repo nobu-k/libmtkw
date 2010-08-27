@@ -7,15 +7,8 @@
 
 namespace mtkw {
 
-struct IndividualProfile {
-  std::string name;
-};
-
-struct MasterProfile {
-  std::string name;
-};
-
 struct Profile;
+// TODO: support thread_model of pfi::lang::shared_ptr
 typedef shared_ptr<Profile> ProfilePtr;
 
 struct Profile {
@@ -23,8 +16,10 @@ struct Profile {
   double start;
   double end;
 
+  std::string message;
+
   ProfilePtr parent;
-  std::list<ProfilePtr> subprofiles;
+  std::vector<ProfilePtr> subprofiles;
 
   bool isRoot() const { return !parent; }
 };

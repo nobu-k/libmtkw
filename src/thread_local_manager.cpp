@@ -49,12 +49,12 @@ int ThreadLocalManager::endProfile()
   }
 
   _profile->end = currentTime();
-  if (_profile->parent) { // not root
-    _profile = _profile->parent;
-
-  } else { // root
+  if (_profile->isRoot()) {
     _last_profile = _profile;
     _profile.reset();
+
+  } else { // root
+    _profile = _profile->parent;
   }
   return 0;
 }
@@ -66,6 +66,26 @@ int ThreadLocalManager::appendProfile(const ProfilePtr& p)
     return -1;
   }
   _profile->subprofiles.push_back(p);
+  return 0;
+}
+
+int ThreadLocalManager::setMessage(const std::string& msg)
+{
+  if (!_profile) {
+    LOG(ERROR) << "No profile to set message";
+    return -1;
+  }
+  _profile->message = msg;
+  return 0;
+}
+
+int ThreadLocalManager::appendMessage(const std::string& msg)
+{
+  if (!_profile) {
+    LOG(ERROR) << "No profile to append message";
+    return -1;
+  }
+  _profile->message += msg;
   return 0;
 }
 
