@@ -52,7 +52,7 @@ public:
 
 } // namespace detail
 
-int initialize();
+int initialize(bool enabled = false);
 inline int enable(bool e = true) {
   return Manager::instance().enable(e);
 }
