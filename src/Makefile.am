@@ -1,5 +1,12 @@
 lib_LTLIBRARIES = libmtkw.la
 
+libmtkw_la_includedir = $(includedir)/mtkw
+libmtkw_la_include_HEADERS = \
+  profile.hpp \
+  profiler.hpp \
+  manager.hpp \
+  util.hpp
+
 libmtkw_la_SOURCES = \
   profile.hpp \
   profiler.hpp \
