@@ -17,6 +17,9 @@ private:
   ProfilePtr& getCurrentProfile(const std::string& root_name);
 
 public:
+  ThreadLocalManager();
+  ~ThreadLocalManager();
+
   int enable(bool e = true);
   int disable();
   bool isEnabled() const { return _enabled; }

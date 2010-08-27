@@ -13,7 +13,8 @@ libmtkw_la_SOURCES = \
   util.hpp
 libmtkw_la_CXXFLAGS = \
   -DMTKW_PFI_INTERNAL
-libmtkw_la_LIBADD =
+libmtkw_la_LIBADD = \
+  -lglog
 
 libmtkw_la_SOURCES += \
   pthread_local_storage.hpp \

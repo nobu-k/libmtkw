@@ -5,8 +5,14 @@
 
 namespace mtkw {
 
-int ThreadLocalManager::enable(bool e)
-{
+ThreadLocalManager::ThreadLocalManager()
+  : _enabled(false) {
+}
+
+ThreadLocalManager::~ThreadLocalManager() {
+}
+
+int ThreadLocalManager::enable(bool e) {
   if (_profile) {
     LOG(ERROR) << "Cannot modify 'enabled' flag while profiling.";
     return -1;
@@ -15,8 +21,7 @@ int ThreadLocalManager::enable(bool e)
   return 0;
 }
 
-int ThreadLocalManager::disable()
-{
+int ThreadLocalManager::disable() {
   if (_profile) {
     LOG(ERROR) << "Cannot modify 'enabled' flag while profiling.";
     return -1;
@@ -25,8 +30,7 @@ int ThreadLocalManager::disable()
   return 0;
 }
 
-int ThreadLocalManager::beginProfile(const std::string& name)
-{
+int ThreadLocalManager::beginProfile(const std::string& name) {
   if (!_enabled) return 0;
 
   ProfilePtr new_prof(new Profile(name));
@@ -41,8 +45,7 @@ int ThreadLocalManager::beginProfile(const std::string& name)
   return 0;
 }
 
-int ThreadLocalManager::endProfile()
-{
+int ThreadLocalManager::endProfile() {
   if (!_enabled) return 0;
   if (!_profile) {
     LOG(ERROR) << "No profile to end";
@@ -60,8 +63,7 @@ int ThreadLocalManager::endProfile()
   return 0;
 }
 
-int ThreadLocalManager::appendProfile(const ProfilePtr& p)
-{
+int ThreadLocalManager::appendProfile(const ProfilePtr& p) {
   if (!_profile) {
     LOG(ERROR) << "No profile to be appended";
     return -1;
@@ -70,8 +72,7 @@ int ThreadLocalManager::appendProfile(const ProfilePtr& p)
   return 0;
 }
 
-int ThreadLocalManager::setMessage(const std::string& msg)
-{
+int ThreadLocalManager::setMessage(const std::string& msg) {
   if (!_profile) {
     LOG(ERROR) << "No profile to set message";
     return -1;
@@ -80,8 +81,7 @@ int ThreadLocalManager::setMessage(const std::string& msg)
   return 0;
 }
 
-int ThreadLocalManager::appendMessage(const std::string& msg)
-{
+int ThreadLocalManager::appendMessage(const std::string& msg) {
   if (!_profile) {
     LOG(ERROR) << "No profile to append message";
     return -1;
