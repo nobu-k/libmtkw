@@ -1,12 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "thread_local_storage.hpp"
 #include "profiler.hpp"
 
 namespace mtkw {
 
 TEST(ProfilerTest, simple_profile) {
-  ASSERT_EQ(0, enableProfiler());
+  ASSERT_EQ(0, enable());
   MTKW_PROFILE_N("P1") {
     ASSERT_FALSE(!getCurrentProfile());
     ASSERT_TRUE(getCurrentProfile()->isRoot());
@@ -44,7 +43,7 @@ void f() {
 } // namespace funprof
 
 TEST(ProfilerTest, simple_function_profile) {
-  ASSERT_EQ(0, enableProfiler());
+  ASSERT_EQ(0, enable());
   MTKW_PROFILE() {
     funprof::f();
   }
@@ -83,7 +82,7 @@ void h() {
 } // namespace nested
 
 TEST(ProfilerTest, nested) {
-  ASSERT_EQ(0, enableProfiler());
+  ASSERT_EQ(0, enable());
   MTKW_PROFILE() {
     nested::h();
   }
@@ -139,7 +138,7 @@ void i() {
 } // namespace multi
 
 TEST(ProfilerTest, multi_subprofile) {
-  ASSERT_EQ(0, enableProfiler());
+  ASSERT_EQ(0, enable());
   MTKW_PROFILE() {
     multi::i();
     multi::h();
@@ -180,7 +179,7 @@ TEST(ProfilerTest, multi_subprofile) {
 } // namespace mtkw
 
 int main(int argc, char* argv[]) {
-  if (mtkw::Manager::initialize(mtkw::createDefaultThreadLocalStorage()) != 0) {
+  if (mtkw::initialize() != 0) {
     LOG(ERROR) << "Failed to initialize Manager.";
     return -1;
   }

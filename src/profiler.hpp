@@ -53,11 +53,11 @@ public:
 } // namespace detail
 
 int initialize();
-inline int enableProfiler(bool e = true) {
+inline int enable(bool e = true) {
   return Manager::instance().enable(e);
 }
 
-inline int disableProfiler() {
+inline int disable() {
   return Manager::instance().disable();
 }
 
