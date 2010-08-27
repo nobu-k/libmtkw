@@ -16,13 +16,32 @@ AC_PROG_CXX
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
+use_glog="no"
+AC_ARG_WITH(glog,
+            AC_HELP_STRING([--with-glog], [use google-glog]),
+            [
+              use_glog=$withval
+            ],
+            [
+              use_glog="no"
+            ])
+AM_CONDITIONAL(MTKW_WITH_GLOG, test "x${use_glog}" = xyes)
+
 # Check PFI_INTERNAL
 AC_ARG_ENABLE(pfi,
               AC_HELP_STRING([--enable-pfi], [enable PFI internal mode]),
               [
                 CXXFLAGS="$CXXFLAGS -DMTKW_PFI_INTERNAL"
+                use_glog="yes"
               ],
               [])
+
+# Check glog
+if test "x$use_glog" = "xyes"; then
+  AC_CHECK_HEADER([glog/logging.h],
+                  [use_glog=$withval],
+                  [AC_MSG_ERROR([Can't find glog/logging.h. Please install google-glog.])])
+fi
 
 # add some flags
 if test "x$CC" = "xgcc" -o "x$CC" = "xccache gcc"; then

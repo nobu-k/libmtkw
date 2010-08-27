@@ -22,8 +22,11 @@ libmtkw_la_SOURCES = \
   time.cpp \
   util.hpp
 libmtkw_la_CXXFLAGS =
-libmtkw_la_LIBADD = \
-  -lglog
+libmtkw_la_LIBADD =
+
+if MTKW_WITH_GLOG
+libmtkw_la_LIBADD += -lglog
+endif
 
 libmtkw_la_SOURCES += \
   pthread_local_storage.hpp \

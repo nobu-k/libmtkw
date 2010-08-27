@@ -26,7 +26,7 @@ TEST(ProfilerTest, simple_profile) {
 
   EXPECT_EQ("P1", p1->name);
   EXPECT_EQ("Red Bull oisiidesu(^q^)", p1->message);
-  ASSERT_EQ(1, p1->subprofiles[0]);
+  ASSERT_EQ(1, p1->subprofiles.size());
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);

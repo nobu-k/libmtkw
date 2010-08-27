@@ -7,13 +7,19 @@
 #include <pficommon/lang/noncopyable.h>
 #else
 #include <tr1/memory>
-// TODO: include noncopyable
+#include <boost/utility.hpp>
 #endif
 
 #if defined MTKW_PFI_INTERNAL || defined MTKW_WITH_GLOG
 #include <glog/logging.h>
 #else
-// TODO: define LOGs with null_ostream like class
+// disable glog
+class NullStream {
+public:
+  template<typename T>
+  NullStream& operator <<(const T& v) { return *this; }
+};
+#define LOG(s) NullStream()
 #endif
 
 namespace mtkw {
@@ -24,7 +30,7 @@ typedef pfi::lang::noncopyable noncopyable;
 #define MTKW_CURRENT_FUNCTION __PRETTY_FUNCTION__
 #else
 using std::tr1::shared_ptr;
-// TODO: use noncopyable
+using boost::noncopyable;
 #define MTKW_CURRENT_FUNCTION "(unknown)"
 #endif
 
