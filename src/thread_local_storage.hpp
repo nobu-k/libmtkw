@@ -11,11 +11,7 @@ public:
   virtual ThreadLocalManager* get() = 0;
 };
 
-class ThreadLocalStorageFactory {
-public:
-  virtual ~ThreadLocalStorageFactory() {}
-  virtual ThreadLocalStorage* create() = 0;
-};
+ThreadLocalStorage* createDefaultThreadLocalStorage();
 
 } // namespace mtkw
 

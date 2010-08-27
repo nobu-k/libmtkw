@@ -15,7 +15,7 @@ public:
   PthreadLocalStorage();
   virtual ~PthreadLocalStorage();
 
-  virtual ThreadLocalManager* get() = 0;
+  virtual ThreadLocalManager* get();
 
   /**
    * @note This function is neccessary to avoid using exception.

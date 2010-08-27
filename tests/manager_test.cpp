@@ -1,24 +1,67 @@
 #include <gtest/gtest.h>
 
+#include "thread_local_storage.hpp"
 #include "thread_local_manager.hpp"
+#include "manager.hpp"
 #include "time.hpp"
 
 namespace mtkw {
+namespace {
+template<typename T> void initializeManager();
+template<typename T> T* createManager();
+template<typename T> void destroyManager(T* mgr);
 
-class ThreadLocalManagerTest : public testing::Test {
-protected:
+template<>
+void initializeManager<ThreadLocalManager>() {}
+template<>
+ThreadLocalManager* createManager<ThreadLocalManager>() {
+  return new ThreadLocalManager();
+}
+template<>
+void destroyManager<ThreadLocalManager>(ThreadLocalManager* mgr) {
+  delete mgr;
+}
+
+template<>
+void initializeManager<Manager>() {
+  ThreadLocalStorage* storage = createDefaultThreadLocalStorage();
+  Manager::initialize(storage);
+}
+template<>
+Manager* createManager<Manager>() {
+  ThreadLocalStorage* storage = createDefaultThreadLocalStorage();
+  Manager::resetThreadLocalStorage(storage);
+  return &Manager::instance();
+}
+template<>
+void destroyManager<Manager>(Manager*) {}
+
+} // namespace
+
+template<typename T>
+class ManagerTest : public testing::Test {
+public:
   virtual void SetUp() {
-    mgr = new ThreadLocalManager();
+    mgr = createManager<T>();
+    ASSERT_FALSE(!mgr);
   }
 
   virtual void TearDown() {
-    delete mgr;
+    destroyManager<T>(mgr);
   }
 
-  ThreadLocalManager* mgr;
+  static void SetUpTestCase() {
+    initializeManager<T>();
+  }
+
+  T* mgr;
 };
 
-TEST_F(ThreadLocalManagerTest, enable) {
+TYPED_TEST_CASE_P(ManagerTest);
+
+TYPED_TEST_P(ManagerTest, enable) {
+  TypeParam* mgr = this->mgr;
+
   ASSERT_FALSE(mgr->isEnabled());
 
   ASSERT_EQ(0, mgr->enable());
@@ -34,7 +77,9 @@ TEST_F(ThreadLocalManagerTest, enable) {
   ASSERT_FALSE(mgr->isEnabled());
 }
 
-TEST_F(ThreadLocalManagerTest, enable_while_profiling) {
+TYPED_TEST_P(ManagerTest, enable_while_profiling) {
+  TypeParam* mgr = this->mgr;
+
   // test profile when disabled
   ASSERT_EQ(0, mgr->beginProfile("test1"));
   ASSERT_FALSE(mgr->isEnabled());
@@ -51,7 +96,9 @@ TEST_F(ThreadLocalManagerTest, enable_while_profiling) {
   ASSERT_NE(0, mgr->enable());
 }
 
-TEST_F(ThreadLocalManagerTest, simple_profile) {
+TYPED_TEST_P(ManagerTest, simple_profile) {
+  TypeParam* mgr = this->mgr;
+
   ASSERT_EQ(0, mgr->enable());
 
   double start = currentTime();
@@ -90,7 +137,9 @@ TEST_F(ThreadLocalManagerTest, simple_profile) {
   EXPECT_LE(mgr->getLastProfile()->start, mgr->getLastProfile()->end);
 }
 
-TEST_F(ThreadLocalManagerTest, nested_profile) {
+TYPED_TEST_P(ManagerTest, nested_profile) {
+  TypeParam* mgr = this->mgr;
+
   ASSERT_EQ(0, mgr->enable());
 
   // begin profiles
@@ -152,7 +201,9 @@ TEST_F(ThreadLocalManagerTest, nested_profile) {
   EXPECT_NE(0, p1->end);
 }
 
-TEST_F(ThreadLocalManagerTest, multi_subprofile) {
+TYPED_TEST_P(ManagerTest, multi_subprofile) {
+  TypeParam* mgr = this->mgr;
+
   ASSERT_EQ(0, mgr->enable());
 
   // begin profiles
@@ -215,5 +266,17 @@ TEST_F(ThreadLocalManagerTest, multi_subprofile) {
   EXPECT_LE(p3->end, p1->end);
   EXPECT_NE(0, p1->end);
 }
+
+REGISTER_TYPED_TEST_CASE_P(ManagerTest,
+                           enable,
+                           enable_while_profiling,
+                           simple_profile,
+                           nested_profile,
+                           multi_subprofile);
+
+typedef testing::Types<Manager, ThreadLocalManager> ManagerTestTypes;
+INSTANTIATE_TYPED_TEST_CASE_P(ManagerTestInstance,
+                              ManagerTest,
+                              ManagerTestTypes);
 
 } // namespace mtkw

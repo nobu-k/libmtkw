@@ -4,6 +4,7 @@ libmtkw_la_SOURCES = \
   profile.hpp \
   profiler.hpp \
   thread_local_storage.hpp \
+  thread_local_storage.cpp \
   thread_local_manager.hpp \
   thread_local_manager.cpp \
   manager.hpp \

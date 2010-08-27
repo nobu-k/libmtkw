@@ -28,6 +28,12 @@ public:
    */
   static int initialize(ThreadLocalStorage* storage);
 
+  /**
+   * @note This function is only for test codes.
+   * @note Calling this function while profiling something is very dangerous.
+   */
+  static int resetThreadLocalStorage(ThreadLocalStorage* storage);
+
   static Manager& instance() {
     if (!_instance) {
       assert(false && "initialize must be called before calling this function");
@@ -47,6 +53,7 @@ public:
   int appendProfile(const ProfilePtr& p);
   int setMessage(const std::string& msg);
   int appendMessage(const std::string& msg);
+  ProfilePtr getCurrentProfile() const;
   ProfilePtr getLastProfile() const;
   //@}
 };

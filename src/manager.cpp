@@ -29,6 +29,15 @@ int Manager::initialize(ThreadLocalStorage* storage) {
   return 0;
 }
 
+int Manager::resetThreadLocalStorage(ThreadLocalStorage* storage) {
+  if (!_instance) {
+    LOG(ERROR) << "Manager is not initialized yet.";
+    return -1;
+  }
+  _instance->_tls.reset(storage);
+  return 0;
+}
+
 ThreadLocalManager* Manager::getTlsMgr() const {
   ThreadLocalManager* mgr = _tls->get();
   if (!mgr) {
@@ -74,12 +83,6 @@ int Manager::appendProfile(const ProfilePtr& p) {
   return mgr->appendProfile(p);
 }
 
-ProfilePtr Manager::getLastProfile() const {
-  ThreadLocalManager* mgr = getTlsMgr();
-  if (!mgr) return ProfilePtr();
-  return mgr->getLastProfile();
-}
-
 int Manager::setMessage(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
@@ -90,6 +93,18 @@ int Manager::appendMessage(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
   return mgr->appendMessage(msg);
+}
+
+ProfilePtr Manager::getCurrentProfile() const {
+  ThreadLocalManager* mgr = getTlsMgr();
+  if (!mgr) return ProfilePtr();
+  return mgr->getCurrentProfile();
+}
+
+ProfilePtr Manager::getLastProfile() const {
+  ThreadLocalManager* mgr = getTlsMgr();
+  if (!mgr) return ProfilePtr();
+  return mgr->getLastProfile();
 }
 
 } // namespace mtkw
