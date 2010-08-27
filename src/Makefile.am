@@ -21,8 +21,7 @@ libmtkw_la_SOURCES = \
   time.hpp \
   time.cpp \
   util.hpp
-libmtkw_la_CXXFLAGS = \
-  -DMTKW_PFI_INTERNAL
+libmtkw_la_CXXFLAGS =
 libmtkw_la_LIBADD = \
   -lglog
 
