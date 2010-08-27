@@ -70,16 +70,16 @@ inline ProfilePtr getLastProfile() {
 
 // Macros to support profiling
 #define MTKW_PROFILE_N(name) \
-  if (detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = detail::ScopedProfiler(name)) {} else 
+  if (::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name)) {} else 
 
 #define MTKW_PROFILE() MTKW_PROFILE_N(MTKW_CURRENT_FUNCTION)
 
 #define MTKW_SCOPED_PROFILE_N(name) \
-  detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = detail::ScopedProfiler(name)
+  ::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name)
 
 #define MTKW_SCOPED_PROFILE() MTKW_SCOPED_PROFILE_N(MTKW_CURRENT_FUNCTION)
 
-#define MTKW_MESSAGE() detail::ProfilerMessenger()
+#define MTKW_MESSAGE() ::mtkw::detail::ProfilerMessenger()
 
 } // namespace mtkw
 
