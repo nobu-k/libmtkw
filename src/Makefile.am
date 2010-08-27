@@ -11,6 +11,7 @@ libmtkw_la_SOURCES = \
   profile.hpp \
   profile.cpp \
   profiler.hpp \
+  profiler.cpp \
   thread_local_storage.hpp \
   thread_local_storage.cpp \
   thread_local_manager.hpp \

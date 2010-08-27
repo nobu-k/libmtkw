@@ -52,6 +52,7 @@ public:
 
 } // namespace detail
 
+int initialize();
 inline int enableProfiler(bool e = true) {
   return Manager::instance().enable(e);
 }
