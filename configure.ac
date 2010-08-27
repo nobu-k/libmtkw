@@ -25,7 +25,6 @@ AC_ARG_WITH(glog,
             [
               use_glog="no"
             ])
-AM_CONDITIONAL(MTKW_WITH_GLOG, test "x${use_glog}" = xyes)
 
 # Check PFI_INTERNAL
 AC_ARG_ENABLE(pfi,
@@ -37,10 +36,13 @@ AC_ARG_ENABLE(pfi,
               [])
 
 # Check glog
+AM_CONDITIONAL(MTKW_WITH_GLOG, test "x${use_glog}" = xyes)
 if test "x$use_glog" = "xyes"; then
+  AC_LANG_PUSH([C++])
   AC_CHECK_HEADER([glog/logging.h],
                   [use_glog=$withval],
                   [AC_MSG_ERROR([Can't find glog/logging.h. Please install google-glog.])])
+  AC_LANG_POP([C++])
 fi
 
 # add some flags
