@@ -1,6 +1,7 @@
 #ifndef LIBMTKW_SRC_PROFILE_HPP_
 #define LIBMTKW_SRC_PROFILE_HPP_
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include "util.hpp"
@@ -25,6 +26,12 @@ struct Profile {
     : name(name), start(0), end(0) {}
   bool isRoot() const { return !parent; }
   double elapsed() const { return end - start; }
+
+  void simpleFormat(std::ostream& out,
+                    const std::string& indent = "  ",
+                    const std::string& initial_indent = "") const;
+  std::string simpleFormat(const std::string& indent = "  ",
+                           const std::string& initial_indent = "") const;
 };
 
 } // namespace mtkw

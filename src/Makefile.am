@@ -9,6 +9,7 @@ libmtkw_la_include_HEADERS = \
 
 libmtkw_la_SOURCES = \
   profile.hpp \
+  profile.cpp \
   profiler.hpp \
   thread_local_storage.hpp \
   thread_local_storage.cpp \
