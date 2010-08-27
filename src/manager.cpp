@@ -14,22 +14,24 @@ Manager::~Manager() {
 }
 
 int Manager::initialize(ThreadLocalStorage* storage) {
-  if (storage == NULL) {
+  if (!storage) {
     LOG(ERROR) << "storage is NULL.";
     return -1;
   }
-  if (_tls) {
+  if (_instance) {
     LOG(ERROR) << "Manager is already initialized.";
     return -1;
   }
 
-  _tls.reset(storage);
-  return -1;
+  Manager* ist = new Manager();
+  ist->_tls.reset(storage);
+  _instance = ist;
+  return 0;
 }
 
-ThreadLocalManager* Manager::getTlsMgr() {
+ThreadLocalManager* Manager::getTlsMgr() const {
   ThreadLocalManager* mgr = _tls->get();
-  if (mgr == NULL) {
+  if (!mgr) {
     LOG(ERROR) << "Failed to get thread local manager.";
     return NULL;
   }
@@ -38,56 +40,56 @@ ThreadLocalManager* Manager::getTlsMgr() {
 
 int Manager::enable(bool e) {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
+  if (!mgr) return -1;
   return mgr->enable(e);
 }
 
 int Manager::disable() {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
+  if (!mgr) return -1;
   return mgr->disable();
 }
 
-int Manager::isEnabled() const {
+bool Manager::isEnabled() const {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
+  if (!mgr) return false;
   return mgr->isEnabled();
 }
 
 int Manager::beginProfile(const std::string& name) {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
+  if (!mgr) return -1;
   return mgr->beginProfile(name);
 }
 
-int Manager::endProfile(const std::string& name) {
+int Manager::endProfile() {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
-  return mgr->endProfile(name);
+  if (!mgr) return -1;
+  return mgr->endProfile();
 }
 
 int Manager::appendProfile(const ProfilePtr& p) {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return -1;
+  if (!mgr) return -1;
   return mgr->appendProfile(p);
 }
 
 ProfilePtr Manager::getLastProfile() const {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return ProfilePtr();
+  if (!mgr) return ProfilePtr();
   return mgr->getLastProfile();
 }
 
 int Manager::setMessage(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return ProfilePtr();
+  if (!mgr) return -1;
   return mgr->setMessage(msg);
 }
 
 int Manager::appendMessage(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
-  if (mgr == NULL) return ProfilePtr();
-  return msg->appendMessage(msg);
+  if (!mgr) return -1;
+  return mgr->appendMessage(msg);
 }
 
 } // namespace mtkw

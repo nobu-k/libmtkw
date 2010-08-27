@@ -21,6 +21,8 @@ struct Profile {
   ProfilePtr parent;
   std::vector<ProfilePtr> subprofiles;
 
+  explicit Profile(const std::string& name)
+    : name(name), start(0), end(0) {}
   bool isRoot() const { return !parent; }
 };
 

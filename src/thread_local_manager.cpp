@@ -1,6 +1,7 @@
 #include "thread_local_manager.hpp"
 
 #include "profile.hpp"
+#include "time.hpp"
 
 namespace mtkw {
 
@@ -31,9 +32,9 @@ int ThreadLocalManager::beginProfile(const std::string& name)
   ProfilePtr new_prof(new Profile(name));
   if (!_profile) _profile.swap(new_prof);
   else {
-    new_prof.parent = _profile;
-    _profile.subprofiles.push_back(new_profile);
-    _profile = new_profile;
+    new_prof->parent = _profile;
+    _profile->subprofiles.push_back(new_prof);
+    _profile = new_prof;
   }
 
   _profile->start = currentTime();

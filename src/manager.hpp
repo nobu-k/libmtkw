@@ -1,6 +1,7 @@
 #ifndef LIBMTKW_SRC_MANAGER_HPP_
 #define LIBMTKW_SRC_MANAGER_HPP_
 
+#include <cassert>
 #include "util.hpp"
 #include "profile.hpp"
 
@@ -16,7 +17,7 @@ private:
   shared_ptr<ThreadLocalStorage> _tls;
 
 private:
-  ThreadLocalManager* getTlsMgr();
+  ThreadLocalManager* getTlsMgr() const;
 
 public:
   ~Manager();

@@ -19,6 +19,7 @@ private:
 public:
   int enable(bool e = true);
   int disable();
+  bool isEnabled() const { return _enabled; }
 
   int beginProfile(const std::string& name);
   int endProfile();
@@ -27,12 +28,8 @@ public:
   int setMessage(const std::string& msg);
   int appendMessage(const std::string& msg);
 
-  ProfilePtr getCurrentProfile() const {
-    return _profile;
-  }
-  ProfilePtr getLastProfile() const {
-    return _last_profile;
-  }
+  ProfilePtr getCurrentProfile() const { return _profile; }
+  ProfilePtr getLastProfile() const { return _last_profile; }
 };
 
 } // namespace mtkw

@@ -8,7 +8,11 @@ libmtkw_la_SOURCES = \
   thread_local_manager.cpp \
   manager.hpp \
   manager.cpp \
+  time.hpp \
+  time.cpp \
   util.hpp
+libmtkw_la_CXXFLAGS = \
+  -DMTKW_PFI_INTERNAL
 libmtkw_la_LIBADD =
 
 libmtkw_la_SOURCES += \

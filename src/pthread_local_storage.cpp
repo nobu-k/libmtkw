@@ -26,8 +26,9 @@ ThreadLocalManager* PthreadLocalStorage::get() {
   }
 
   // get thread local one
-  ThreadLocalManager* ptr = pthread_getspecific(_pimpl->tls_key);
-  if (ptr == NULL) {
+  ThreadLocalManager* ptr =
+    static_cast<ThreadLocalManager*>(pthread_getspecific(_pimpl->tls_key));
+  if (!ptr) {
     ptr = new ThreadLocalManager();
     if (pthread_setspecific(_pimpl->tls_key, ptr) != 0) {
       delete ptr;
@@ -46,7 +47,7 @@ void tlsDestructor(void* ptr) {
 } // namespace
 
 int PthreadLocalStorage::initialize() {
-  if (_pimpl != NULL) {
+  if (_pimpl) {
     LOG(ERROR) << "PthreadLocalStorage is already initialized.";
     return -1;
   }
