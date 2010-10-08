@@ -24,7 +24,7 @@ public:
   int disable();
   bool isEnabled() const { return _enabled; }
 
-  int beginProfile(const std::string& name);
+  int beginProfile(const std::string& name, bool gen_stat = false);
   int endProfile();
   int appendProfile(const ProfilePtr& p);
 

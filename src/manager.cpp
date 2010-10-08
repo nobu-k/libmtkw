@@ -68,16 +68,22 @@ bool Manager::isEnabled() const {
   return mgr->isEnabled();
 }
 
-int Manager::beginProfile(const std::string& name) {
+int Manager::beginProfile(const std::string& name, bool gen_stat) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
-  return mgr->beginProfile(name);
+  return mgr->beginProfile(name, gen_stat);
 }
 
 int Manager::endProfile() {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
-  return mgr->endProfile();
+  if (mgr->endProfile() != 0) return -1;
+
+  // The last profile was the root. Update statistics.
+  if (!mgr->getCurrentProfile()) {
+    addStatistics(mgr->getLastProfile());
+  }
+  return 0;
 }
 
 int Manager::appendProfile(const ProfilePtr& p) {
@@ -108,6 +114,15 @@ ProfilePtr Manager::getLastProfile() const {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return ProfilePtr();
   return mgr->getLastProfile();
+}
+
+void Manager::addStatistics(const ProfilePtr& p) {
+  thread::wlock lk(_statistics_mutex);
+  if (!p) {
+    LOG(ERROR) << "Cannot add invalid profile to statistics";
+    return;
+  }
+  p->getStatistics(_statistics);
 }
 
 } // namespace mtkw

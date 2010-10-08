@@ -14,15 +14,15 @@ private:
   typedef void (ScopedProfiler::*false_bool_type)() const;
 
 public:
-  explicit ScopedProfiler(const char* name) {
+  explicit ScopedProfiler(const char* name, bool gen_stat = false) {
     Manager& mgr = Manager::instance();
     if (mgr.isEnabled()) {
-      Manager::instance().beginProfile(name);
+      Manager::instance().beginProfile(name, gen_stat);
     }
   }
-  explicit ScopedProfiler(const std::string& name) {
+  explicit ScopedProfiler(const std::string& name, bool gen_stat = false) {
     Manager& mgr = Manager::instance();
-    if (mgr.isEnabled()) mgr.beginProfile(name);
+    if (mgr.isEnabled()) mgr.beginProfile(name, gen_stat);
   }
 
   ~ScopedProfiler() {

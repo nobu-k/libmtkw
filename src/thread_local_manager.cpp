@@ -30,10 +30,10 @@ int ThreadLocalManager::disable() {
   return 0;
 }
 
-int ThreadLocalManager::beginProfile(const std::string& name) {
+int ThreadLocalManager::beginProfile(const std::string& name, bool gen_stat) {
   if (!_enabled) return 0;
 
-  ProfilePtr new_prof(new Profile(name));
+  ProfilePtr new_prof(new Profile(name, gen_stat));
   if (!_profile) _profile.swap(new_prof);
   else {
     new_prof->parent = _profile;
@@ -57,7 +57,7 @@ int ThreadLocalManager::endProfile() {
     _last_profile = _profile;
     _profile.reset();
 
-  } else { // root
+  } else { // not root
     _profile = _profile->parent;
   }
   return 0;
