@@ -5,7 +5,8 @@ libmtkw_la_include_HEADERS = \
   profile.hpp \
   profiler.hpp \
   manager.hpp \
-  util.hpp
+  util.hpp \
+  thread.hpp
 
 libmtkw_la_SOURCES = \
   profile.hpp \
@@ -20,7 +21,9 @@ libmtkw_la_SOURCES = \
   manager.cpp \
   time.hpp \
   time.cpp \
-  util.hpp
+  util.hpp \
+  thread.hpp
+
 libmtkw_la_CXXFLAGS =
 libmtkw_la_LIBADD =
 

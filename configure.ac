@@ -31,6 +31,7 @@ AC_ARG_ENABLE(pfi,
               AC_HELP_STRING([--enable-pfi], [enable PFI internal mode]),
               [
                 CXXFLAGS="$CXXFLAGS -DMTKW_PFI_INTERNAL"
+                LDFLAGS="$LDFLAGS -lpficommon"
                 use_glog="yes"
               ],
               [])
