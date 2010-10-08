@@ -70,15 +70,27 @@ inline ProfilePtr getLastProfile() {
 }
 
 // Macros to support profiling
-#define MTKW_PROFILE_N(name) \
-  if (::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name)) {} else 
+#define MTKW_PROFILE_INTERNAL_(name, gen_stat) \
+  if (::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name, gen_stat)) {} else
 
+#define MTKW_SCOPED_PROFILE_INTERNAL_(name, gen_stat) \
+  ::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name, gen_stat)
+
+#define MTKW_PROFILE_N(name) MTKW_PROFILE_INTERNAL_(name, false)
 #define MTKW_PROFILE() MTKW_PROFILE_N(MTKW_CURRENT_FUNCTION)
 
-#define MTKW_SCOPED_PROFILE_N(name) \
-  ::mtkw::detail::ScopedProfiler libmtkw_scoped_profiler_long_name_dayo_ = ::mtkw::detail::ScopedProfiler(name)
-
+#define MTKW_SCOPED_PROFILE_N(name) MTKW_SCOPED_PROFILE_INTERNAL_(name, false)
 #define MTKW_SCOPED_PROFILE() MTKW_SCOPED_PROFILE_N(MTKW_CURRENT_FUNCTION)
+
+// statistical version
+#define MTKW_SPROFILE_N(name) MTKW_PROFILE_INTERNAL_(name, true)
+#define MTKW_SPROFILE() MTKW_SPROFILE_N(MTKW_CURRENT_FUNCTION)
+
+#define MTKW_SCOPED_SPROFILE_N(name) MTKW_SCOPED_PROFILE_INTERNAL_(name, true)
+#define MTKW_SCOPED_SPROFILE() MTKW_SCOPED_SPROFILE_N(MTKW_CURRENT_FUNCTION)
+
+// for functions
+#define MTKW_PROFILE_FUNCTION() MTKW_SCOPED_SPROFILE()
 
 #define MTKW_MESSAGE() ::mtkw::detail::ProfilerMessenger()
 

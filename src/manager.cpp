@@ -81,7 +81,8 @@ int Manager::endProfile() {
 
   // The last profile was the root. Update statistics.
   if (!mgr->getCurrentProfile()) {
-    addStatistics(mgr->getLastProfile());
+    ProfilePtr ptr = mgr->getLastProfile();
+    if (ptr) ptr->getStatistics(_statistics);
   }
   return 0;
 }
@@ -117,12 +118,11 @@ ProfilePtr Manager::getLastProfile() const {
 }
 
 void Manager::addStatistics(const ProfilePtr& p) {
-  thread::wlock lk(_statistics_mutex);
-  if (!p) {
-    LOG(ERROR) << "Cannot add invalid profile to statistics";
-    return;
-  }
   p->getStatistics(_statistics);
+}
+
+void Manager::clearStatistics() {
+  _statistics.clear();
 }
 
 } // namespace mtkw

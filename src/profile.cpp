@@ -1,11 +1,12 @@
 #include "profile.hpp"
 
 #include <sstream>
+#include <limits>
 
 namespace mtkw {
 
-void Profile::getStatistics(std::map<std::string, ProfileStatistics>& statistics) const {
-  if (generate_statistics) statistics[name].add(*this);
+void Profile::getStatistics(ProfileStatistics& statistics) const {
+  if (generate_statistics) statistics.add(*this);
   for (size_t i = 0; i < subprofiles.size(); i++) {
     subprofiles[i]->getStatistics(statistics);
   }
@@ -31,32 +32,16 @@ std::string Profile::simpleFormat(const std::string& indent,
   return out.str();
 }
 
-ProfileStatistics::ProfileStatistics()
-  : _called(0), _total(0), _max(0), _min(0) {
+SingleProfileStatistics::SingleProfileStatistics()
+  : _called(0), _total(0)
+  ,  _max(-std::numeric_limits<double>::infinity())
+  ,  _min(std::numeric_limits<double>::infinity()) {
 }
 
-ProfileStatistics::ProfileStatistics(const ProfileStatistics& s) {
-  thread::rlock lk(s._mutex);
-  _called = s._called;
-  _total = s._total;
-  _max = s._max;
-  _min = s._min;
+SingleProfileStatistics::~SingleProfileStatistics() {
 }
 
-ProfileStatistics::~ProfileStatistics() {
-}
-
-ProfileStatistics& ProfileStatistics::operator =(const ProfileStatistics& s) {
-  if (this == &s) return *this;
-  ProfileStatistics tmp(s);
-
-  thread::wlock lk(_mutex);
-  tmp.swapImpl(*this); // tmp does not need lock
-  return *this;
-}
-
-void ProfileStatistics::add(const Profile& prof) {
-  thread::wlock lk(_mutex);
+void SingleProfileStatistics::add(const Profile& prof) {
   _called++;
 
   const double t = prof.time();
@@ -65,47 +50,73 @@ void ProfileStatistics::add(const Profile& prof) {
   _min = std::min(_min, t);
 }
 
-size_t ProfileStatistics::called() const {
-  thread::rlock lk(_mutex);
-  return _called;
-}
-
-double ProfileStatistics::average() const {
-  thread::rlock lk(_mutex);
-  return _called ? _total / _called : 0;
-}
-
-double ProfileStatistics::max() const {
-  thread::rlock lk(_mutex);
-  return _max;
-}
-
-double ProfileStatistics::min() const {
-  thread::rlock lk(_mutex);
-  return _min;
-}
-
-void ProfileStatistics::swapImpl(ProfileStatistics& s) {
+void SingleProfileStatistics::swap(SingleProfileStatistics& s) {
   std::swap(_called, s._called);
   std::swap(_total, s._total);
   std::swap(_max, s._max);
   std::swap(_min, s._min);
 }
 
-void ProfileStatistics::swap(ProfileStatistics& s) {
-  if (this == &s) return;
+ProfileStatistics::ProfileStatistics() {
+}
 
-  // two locks must be acquired in the consistent order for any pair of locks
-  if (this < &s) {
-    thread::wlock this_lk(_mutex);
-    thread::wlock other_lk(s._mutex);
-    swapImpl(s);
+ProfileStatistics::~ProfileStatistics() {
+}
 
-  } else {
-    thread::wlock other_lk(s._mutex);
-    thread::wlock this_lk(_mutex);
-    swapImpl(s);
+size_t ProfileStatistics::size() const {
+  thread::rlock lk(_mutex);
+  return _statistics.size();
+}
+
+void ProfileStatistics::addImpl(Statistics& st, const Profile& prof) {
+  thread::wlock lk(st.mutex);
+  st.stat.add(prof);
+}
+
+void ProfileStatistics::add(const Profile& prof) {
+  { // check if name already exists
+    thread::rlock lk(_mutex);
+    StatisticsMap::iterator it = _statistics.find(prof.name);
+    if (it != _statistics.end()) {
+      return addImpl(it->second, prof);
+    }
   }
+
+  // Other threads may create a new entry for prof.name
+  // earlier than this thread.
+  // boost::upgrade_lock may be good to avoid this redundant write-lock.
+
+  { // create a new entry
+    thread::wlock lk(_mutex);
+    addImpl(_statistics[prof.name], prof);
+  }
+}
+
+int ProfileStatistics::get(const std::string& name, SingleProfileStatistics& result) const {
+  thread::rlock lk(_mutex);
+  StatisticsMap::const_iterator it = _statistics.find(name);
+  if (it == _statistics.end()) return -1; // no entry
+
+  const Statistics& st = it->second;
+  thread::rlock stlk(st.mutex);
+  result = st.stat;
+  return 0;
+}
+
+void ProfileStatistics::getAll(std::map<std::string, SingleProfileStatistics>& result) const {
+  thread::rlock lk(_mutex);
+  StatisticsMap::const_iterator it = _statistics.begin(), end = _statistics.end();
+  for (; it != end; ++it) {
+    const std::string& name = it->first;
+    const Statistics& st = it->second;
+    thread::rlock stlk(st.mutex);
+    result[name] = st.stat;
+  }
+}
+
+void ProfileStatistics::clear() {
+  thread::wlock lk(_mutex);
+  _statistics.clear();
 }
 
 } // namespace mtkw

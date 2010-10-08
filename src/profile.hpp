@@ -32,7 +32,7 @@ struct Profile {
   bool isRoot() const { return !parent; }
   double time() const { return end - start; }
 
-  void getStatistics(std::map<std::string, ProfileStatistics>& statistics) const;
+  void getStatistics(ProfileStatistics& statistics) const;
   void simpleFormat(std::ostream& out,
                     const std::string& indent = "  ",
                     const std::string& initial_indent = "") const;
@@ -40,33 +40,66 @@ struct Profile {
                            const std::string& initial_indent = "") const;
 };
 
-class ProfileStatistics {
+/**
+ * @note This class is not thread safe.
+ */
+class SingleProfileStatistics {
 private:
   size_t _called;
   double _total;
   double _max;
   double _min;
 
-  /// @todo This should be hidden in pimpl
-  mutable thread::rw_mutex _mutex;
-
-  void swapImpl(ProfileStatistics& s);
-
 public:
-  ProfileStatistics();
-  ProfileStatistics(const ProfileStatistics& s);
-  ~ProfileStatistics();
-
-  ProfileStatistics& operator =(const ProfileStatistics& s);
+  SingleProfileStatistics();
+  ~SingleProfileStatistics();
 
   void add(const Profile& prof);
 
-  size_t called() const;
-  double average() const;
-  double max() const;
-  double min() const;
+  size_t called() const { return _called; }
+  double average() const { return _called ? _total / _called : 0; }
+  double max() const { return _max; }
+  double min() const { return _min; }
 
-  void swap(ProfileStatistics& s);
+  void swap(SingleProfileStatistics& s);
+};
+
+class ProfileStatistics : noncopyable {
+private:
+  struct Statistics {
+    SingleProfileStatistics stat;
+    mutable thread::rw_mutex mutex;
+
+    Statistics() {}
+    Statistics(const Statistics& st)
+      : stat(st.stat) {} // not copy mutex
+  };
+
+  typedef std::map<std::string, Statistics> StatisticsMap;
+  StatisticsMap _statistics;
+
+  // This mutex only guards the state of _statistics.
+  // Statistics::stat can be modified even if _mutex
+  // is write-locked.
+  mutable thread::rw_mutex _mutex;
+
+  void addImpl(Statistics& st, const Profile& prof);
+
+public:
+  ProfileStatistics();
+  ~ProfileStatistics();
+
+  size_t size() const;
+
+  /**
+   * @note This function does not add subprofiles of prof.
+   */
+  void add(const Profile& prof);
+
+  int get(const std::string& name, SingleProfileStatistics& result) const;
+  void getAll(std::map<std::string, SingleProfileStatistics>& result) const;
+
+  void clear();
 };
 
 } // namespace mtkw

@@ -2,17 +2,31 @@
 
 #include "profiler.hpp"
 
+#ifdef STATISTICAL_PROFILER_TEST
+#define ProfilerTest StatisticalProfilerTest
+#define MTKW_APROFILE_N MTKW_SPROFILE_N
+#define MTKW_APROFILE MTKW_SPROFILE
+#define MTKW_SCOPED_APROFILE_N MTKW_SCOPED_SPROFILE_N
+#define MTKW_SCOPED_APROFILE MTKW_SCOPED_SPROFILE
+#else // normal profiler
+#define ProfilerTest NormalProfilerTest
+#define MTKW_APROFILE_N MTKW_PROFILE_N
+#define MTKW_APROFILE MTKW_PROFILE
+#define MTKW_SCOPED_APROFILE_N MTKW_SCOPED_PROFILE_N
+#define MTKW_SCOPED_APROFILE MTKW_SCOPED_PROFILE
+#endif
+
 namespace mtkw {
 
 TEST(ProfilerTest, simple_profile) {
   ASSERT_EQ(0, enable());
-  MTKW_PROFILE_N("P1") {
+  MTKW_APROFILE_N("P1") {
     ASSERT_FALSE(!getCurrentProfile());
     ASSERT_TRUE(getCurrentProfile()->isRoot());
     MTKW_MESSAGE() << "Red Bull";
     MTKW_MESSAGE() << " oisiidesu(^q^)";
 
-    MTKW_PROFILE_N("P2") {
+    MTKW_APROFILE_N("P2") {
       ASSERT_FALSE(!getCurrentProfile());
       ASSERT_FALSE(getCurrentProfile()->isRoot());
       MTKW_MESSAGE() << "hogehoge" << 1 << 2 << 3;
@@ -34,17 +48,30 @@ TEST(ProfilerTest, simple_profile) {
   EXPECT_EQ("P2", p2->name);
   EXPECT_EQ("hogehoge123", p2->message);
   EXPECT_TRUE(p2->subprofiles.empty());
+
+#ifdef STATISTICAL_PROFILER_TEST
+  ProfileStatistics st;
+  p1->getStatistics(st);
+  ASSERT_EQ(2, st.size());
+
+  SingleProfileStatistics s;
+  ASSERT_EQ(0, st.get("P1", s));
+  EXPECT_EQ(1, s.called());
+
+  ASSERT_EQ(0, st.get("P2", s));
+  EXPECT_EQ(1, s.called());
+#endif
 }
 
 namespace funprof {
 void f() {
-  MTKW_SCOPED_PROFILE();
+  MTKW_SCOPED_APROFILE();
 }
 } // namespace funprof
 
 TEST(ProfilerTest, simple_function_profile) {
   ASSERT_EQ(0, enable());
-  MTKW_PROFILE() {
+  MTKW_APROFILE() {
     funprof::f();
   }
 
@@ -61,12 +88,12 @@ TEST(ProfilerTest, simple_function_profile) {
 
 namespace nested {
 void f() {
-  MTKW_SCOPED_PROFILE();
+  MTKW_SCOPED_APROFILE();
   MTKW_MESSAGE() << "hoge";
 }
 
 void g() {
-  MTKW_PROFILE_N("g") {
+  MTKW_APROFILE_N("g") {
     MTKW_MESSAGE() << "Red";
     f();
     MTKW_MESSAGE() << " Bull";
@@ -74,7 +101,7 @@ void g() {
 }
 
 void h() {
-  MTKW_SCOPED_PROFILE_N("h");
+  MTKW_SCOPED_APROFILE_N("h");
   MTKW_MESSAGE() << 1 << " " << 2;
   g();
   MTKW_MESSAGE() << " " << 3;
@@ -83,7 +110,7 @@ void h() {
 
 TEST(ProfilerTest, nested) {
   ASSERT_EQ(0, enable());
-  MTKW_PROFILE() {
+  MTKW_APROFILE() {
     nested::h();
   }
 
@@ -114,16 +141,16 @@ TEST(ProfilerTest, nested) {
 
 namespace multi {
 void f() {
-  MTKW_PROFILE_N("f1") MTKW_MESSAGE() << "Red";
-  MTKW_PROFILE_N("f2") MTKW_MESSAGE() << "Bull";
+  MTKW_APROFILE_N("f1") MTKW_MESSAGE() << "Red";
+  MTKW_APROFILE_N("f2") MTKW_MESSAGE() << "Bull";
 }
 
 void g() {
-  MTKW_PROFILE() MTKW_MESSAGE() << "oisiidesu";
+  MTKW_APROFILE() MTKW_MESSAGE() << "oisiidesu";
 }
 
 void h() {
-  MTKW_PROFILE() {
+  MTKW_APROFILE() {
     MTKW_MESSAGE() << "(";
     g();
     MTKW_MESSAGE() << "^q^";
@@ -133,13 +160,13 @@ void h() {
 }
 
 void i() {
-  MTKW_PROFILE() MTKW_MESSAGE() << "hoge";
+  MTKW_APROFILE() MTKW_MESSAGE() << "hoge";
 }
 } // namespace multi
 
 TEST(ProfilerTest, multi_subprofile) {
   ASSERT_EQ(0, enable());
-  MTKW_PROFILE() {
+  MTKW_APROFILE() {
     multi::i();
     multi::h();
   }

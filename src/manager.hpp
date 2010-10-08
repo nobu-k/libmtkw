@@ -4,7 +4,6 @@
 #include <cassert>
 #include "util.hpp"
 #include "profile.hpp"
-#include "thread.hpp"
 
 namespace mtkw {
 
@@ -16,9 +15,7 @@ private:
   Manager();
   static Manager* _instance;
   shared_ptr<ThreadLocalStorage> _tls;
-
-  std::map<std::string, ProfileStatistics> _statistics;
-  mutable thread::rw_mutex _statistics_mutex;
+  ProfileStatistics _statistics;
 
 private:
   ThreadLocalManager* getTlsMgr() const;
@@ -66,6 +63,7 @@ public:
    */
   //@{
   void addStatistics(const ProfilePtr& p);
+  void clearStatistics();
   // TODO: add function to generate statistics for a single profile
   //@}
 };
