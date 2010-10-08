@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "util.hpp"
+#include "thread.hpp"
 
 namespace mtkw {
 
@@ -32,6 +33,30 @@ struct Profile {
                     const std::string& initial_indent = "") const;
   std::string simpleFormat(const std::string& indent = "  ",
                            const std::string& initial_indent = "") const;
+};
+
+class ProfileStatistics {
+private:
+  const std::string _name;
+  size_t _called;
+  double _total;
+  double _max;
+  double _min;
+
+  /// @todo This should be hidden in pimpl
+  mutable thread::rw_mutex _mutex;
+
+public:
+  explicit ProfileStatistics(const std::string& name);
+  ~ProfileStatistics();
+
+  void add(const Profile& prof);
+
+  const std::string& name() const { return _name; }
+  size_t called() const;
+  double average() const;
+  double max() const;
+  double min() const;
 };
 
 } // namespace mtkw

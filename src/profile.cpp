@@ -24,4 +24,43 @@ std::string Profile::simpleFormat(const std::string& indent,
   return out.str();
 }
 
+ProfileStatistics::ProfileStatistics(const std::string& name)
+  : _name(name), _called(0), _total(0), _max(0), _min(0) {
+}
+
+ProfileStatistics::~ProfileStatistics() {
+}
+
+void ProfileStatistics::add(const Profile& prof) {
+  if (_name != prof.name) return; // not counted
+
+  thread::wlock lk(_mutex);
+  _called++;
+
+  const double t = prof.time();
+  _total += t;
+  _max = std::max(_max, t);
+  _min = std::min(_min, t);
+}
+
+size_t ProfileStatistics::called() const {
+  thread::rlock lk(_mutex);
+  return _called;
+}
+
+double ProfileStatistics::average() const {
+  thread::rlock lk(_mutex);
+  return _called ? _total / _called : 0;
+}
+
+double ProfileStatistics::max() const {
+  thread::rlock lk(_mutex);
+  return _max;
+}
+
+double ProfileStatistics::min() const {
+  thread::rlock lk(_mutex);
+  return _min;
+}
+
 } // namespace mtkw
