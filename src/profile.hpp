@@ -25,7 +25,7 @@ struct Profile {
   explicit Profile(const std::string& name)
     : name(name), start(0), end(0) {}
   bool isRoot() const { return !parent; }
-  double elapsed() const { return end - start; }
+  double time() const { return end - start; }
 
   void simpleFormat(std::ostream& out,
                     const std::string& indent = "  ",
