@@ -34,7 +34,9 @@ AC_ARG_ENABLE(pfi,
                 LDFLAGS="$LDFLAGS -lpficommon"
                 use_glog="yes"
               ],
-              [])
+              [
+	        LDFLAGS="$LDFLAGS -lboost_thread"
+	      ])
 
 # Check glog
 AM_CONDITIONAL(MTKW_WITH_GLOG, test "x${use_glog}" = xyes)

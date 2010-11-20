@@ -8,6 +8,7 @@
 #else
 #include <tr1/memory>
 #include <boost/utility.hpp>
+#include <boost/current_function.hpp>
 #endif
 
 #if defined MTKW_PFI_INTERNAL || defined MTKW_WITH_GLOG
@@ -31,7 +32,7 @@ typedef pfi::lang::noncopyable noncopyable;
 #else
 using std::tr1::shared_ptr;
 using boost::noncopyable;
-#define MTKW_CURRENT_FUNCTION "(unknown)"
+#define MTKW_CURRENT_FUNCTION BOOST_CURRENT_FUNCTION
 #endif
 
 // TODO: define unordered_map
