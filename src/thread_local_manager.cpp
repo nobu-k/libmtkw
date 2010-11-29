@@ -72,21 +72,21 @@ int ThreadLocalManager::appendProfile(const ProfilePtr& p) {
   return 0;
 }
 
-int ThreadLocalManager::setMessage(const std::string& msg) {
+int ThreadLocalManager::setDebugLog(const std::string& msg) {
   if (!_profile) {
     LOG(ERROR) << "No profile to set message";
     return -1;
   }
-  _profile->message = msg;
+  _profile->debug_log = msg;
   return 0;
 }
 
-int ThreadLocalManager::appendMessage(const std::string& msg) {
+int ThreadLocalManager::appendDebugLog(const std::string& msg) {
   if (!_profile) {
     LOG(ERROR) << "No profile to append message";
     return -1;
   }
-  _profile->message += msg;
+  _profile->debug_log += msg;
   return 0;
 }
 

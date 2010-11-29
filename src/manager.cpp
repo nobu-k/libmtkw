@@ -93,16 +93,16 @@ int Manager::appendProfile(const ProfilePtr& p) {
   return mgr->appendProfile(p);
 }
 
-int Manager::setMessage(const std::string& msg) {
+int Manager::setDebugLog(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
-  return mgr->setMessage(msg);
+  return mgr->setDebugLog(msg);
 }
 
-int Manager::appendMessage(const std::string& msg) {
+int Manager::appendDebugLog(const std::string& msg) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
-  return mgr->appendMessage(msg);
+  return mgr->appendDebugLog(msg);
 }
 
 ProfilePtr Manager::getCurrentProfile() const {

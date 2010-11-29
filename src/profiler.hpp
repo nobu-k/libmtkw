@@ -33,18 +33,18 @@ public:
   operator false_bool_type() const { return 0; }
 };
 
-class ProfilerMessenger : noncopyable {
+class ProfilerDebugLogger : noncopyable {
 private:
   std::ostringstream oss;
 
 public:
-  ~ProfilerMessenger() {
+  ~ProfilerDebugLogger() {
     Manager& mgr = Manager::instance();
-    if (mgr.isEnabled()) mgr.appendMessage(oss.str());
+    if (mgr.isEnabled()) mgr.appendDebugLog(oss.str());
   }
 
   template<typename T>
-  ProfilerMessenger& operator <<(const T& v) {
+  ProfilerDebugLogger& operator <<(const T& v) {
     oss << v;
     return *this;
   }
@@ -92,7 +92,7 @@ inline ProfilePtr getLastProfile() {
 // for functions
 #define MTKW_PROFILE_FUNCTION() MTKW_SCOPED_SPROFILE()
 
-#define MTKW_MESSAGE() ::mtkw::detail::ProfilerMessenger()
+#define MTKW_DLOG() ::mtkw::detail::ProfilerDebugLogger()
 
 } // namespace mtkw
 

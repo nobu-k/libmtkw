@@ -22,7 +22,7 @@ struct Profile {
   double start;
   double end;
 
-  std::string message;
+  std::string debug_log;
 
   ProfilePtr parent;
   std::vector<ProfilePtr> subprofiles;

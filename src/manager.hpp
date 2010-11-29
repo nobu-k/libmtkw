@@ -52,8 +52,8 @@ public:
   int beginProfile(const std::string& name, bool gen_stat = false);
   int endProfile();
   int appendProfile(const ProfilePtr& p);
-  int setMessage(const std::string& msg);
-  int appendMessage(const std::string& msg);
+  int setDebugLog(const std::string& msg);
+  int appendDebugLog(const std::string& msg);
   ProfilePtr getCurrentProfile() const;
   ProfilePtr getLastProfile() const;
   //@}

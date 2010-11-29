@@ -111,13 +111,13 @@ TYPED_TEST_P(ManagerTest, simple_profile) {
   EXPECT_NE(0, mgr->getCurrentProfile()->start);
   EXPECT_EQ(0, mgr->getCurrentProfile()->end);
 
-  // check message
-  ASSERT_EQ(0, mgr->setMessage("M1"));
-  EXPECT_EQ("M1", mgr->getCurrentProfile()->message);
-  ASSERT_EQ(0, mgr->setMessage("M2"));
-  EXPECT_EQ("M2", mgr->getCurrentProfile()->message);
-  ASSERT_EQ(0, mgr->appendMessage("M3"));
-  EXPECT_EQ("M2M3", mgr->getCurrentProfile()->message);
+  // check debug_log
+  ASSERT_EQ(0, mgr->setDebugLog("M1"));
+  EXPECT_EQ("M1", mgr->getCurrentProfile()->debug_log);
+  ASSERT_EQ(0, mgr->setDebugLog("M2"));
+  EXPECT_EQ("M2", mgr->getCurrentProfile()->debug_log);
+  ASSERT_EQ(0, mgr->appendDebugLog("M3"));
+  EXPECT_EQ("M2M3", mgr->getCurrentProfile()->debug_log);
 
   // end profile
   ASSERT_TRUE(!mgr->getLastProfile());
@@ -128,7 +128,7 @@ TYPED_TEST_P(ManagerTest, simple_profile) {
   ASSERT_TRUE(mgr->getLastProfile()->subprofiles.empty());
   ASSERT_NE(0, mgr->getLastProfile()->end);
   ASSERT_EQ("P1", mgr->getLastProfile()->name);
-  ASSERT_EQ("M2M3", mgr->getLastProfile()->message);
+  ASSERT_EQ("M2M3", mgr->getLastProfile()->debug_log);
 
   // check time
   double end = currentTime();
@@ -146,19 +146,19 @@ TYPED_TEST_P(ManagerTest, nested_profile) {
   ASSERT_EQ(0, mgr->beginProfile("P1"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
-  ASSERT_EQ(0, mgr->setMessage("M1"));
+  ASSERT_EQ(0, mgr->setDebugLog("M1"));
 
   ASSERT_EQ(0, mgr->beginProfile("P2"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
-  ASSERT_EQ(0, mgr->setMessage("M2"));
+  ASSERT_EQ(0, mgr->setDebugLog("M2"));
 
   ASSERT_EQ(0, mgr->beginProfile("P3"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
-  ASSERT_EQ(0, mgr->setMessage("M3"));
+  ASSERT_EQ(0, mgr->setDebugLog("M3"));
 
   // end profiles
   ASSERT_EQ(0, mgr->endProfile()); // end P3
@@ -174,21 +174,21 @@ TYPED_TEST_P(ManagerTest, nested_profile) {
   // check profiles
   ProfilePtr p1 = mgr->getLastProfile();
   EXPECT_EQ("P1", p1->name);
-  EXPECT_EQ("M1", p1->message);
+  EXPECT_EQ("M1", p1->debug_log);
   ASSERT_EQ(1, p1->subprofiles.size());
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
   EXPECT_TRUE(p1 == p2->parent);
   EXPECT_EQ("P2", p2->name);
-  EXPECT_EQ("M2", p2->message);
+  EXPECT_EQ("M2", p2->debug_log);
   ASSERT_EQ(1, p2->subprofiles.size());
 
   ProfilePtr p3 = p2->subprofiles[0];
   ASSERT_FALSE(!p3);
   EXPECT_TRUE(p2 == p3->parent);
   EXPECT_EQ("P3", p3->name);
-  EXPECT_EQ("M3", p3->message);
+  EXPECT_EQ("M3", p3->debug_log);
   EXPECT_TRUE(p3->subprofiles.empty());
 
   // check times
@@ -210,14 +210,14 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   ASSERT_EQ(0, mgr->beginProfile("P1"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
-  ASSERT_EQ(0, mgr->setMessage("M1"));
+  ASSERT_EQ(0, mgr->setDebugLog("M1"));
 
   // begin&end subprofiles P2
   ASSERT_EQ(0, mgr->beginProfile("P2"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
-  ASSERT_EQ(0, mgr->setMessage("M2"));
+  ASSERT_EQ(0, mgr->setDebugLog("M2"));
   ASSERT_EQ(0, mgr->endProfile()); // end P2
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
@@ -227,7 +227,7 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
-  ASSERT_EQ(0, mgr->setMessage("M3"));
+  ASSERT_EQ(0, mgr->setDebugLog("M3"));
   ASSERT_EQ(0, mgr->endProfile()); // end P3
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
@@ -240,21 +240,21 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   // check profiles
   ProfilePtr p1 = mgr->getLastProfile();
   EXPECT_EQ("P1", p1->name);
-  EXPECT_EQ("M1", p1->message);
+  EXPECT_EQ("M1", p1->debug_log);
   ASSERT_EQ(2, p1->subprofiles.size());
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
   EXPECT_TRUE(p1 == p2->parent);
   EXPECT_EQ("P2", p2->name);
-  EXPECT_EQ("M2", p2->message);
+  EXPECT_EQ("M2", p2->debug_log);
   EXPECT_TRUE(p2->subprofiles.empty());
 
   ProfilePtr p3 = p1->subprofiles[1];
   ASSERT_FALSE(!p3);
   EXPECT_TRUE(p1 == p3->parent);
   EXPECT_EQ("P3", p3->name);
-  EXPECT_EQ("M3", p3->message);
+  EXPECT_EQ("M3", p3->debug_log);
   EXPECT_TRUE(p3->subprofiles.empty());
 
   // check times
