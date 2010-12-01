@@ -30,6 +30,7 @@ AC_ARG_WITH(glog,
 AC_ARG_ENABLE(pfi,
               AC_HELP_STRING([--enable-pfi], [enable PFI internal mode]),
               [
+	        MTKW_CXXFLAGS="-DMTKW_PFI_INTERNAL"
                 CXXFLAGS="$CXXFLAGS -DMTKW_PFI_INTERNAL"
                 LDFLAGS="$LDFLAGS -lpficommon"
                 use_glog="yes"
@@ -41,12 +42,14 @@ AC_ARG_ENABLE(pfi,
 # Check glog
 AM_CONDITIONAL(MTKW_WITH_GLOG, test "x${use_glog}" = xyes)
 if test "x$use_glog" = "xyes"; then
+  MTKW_CXXFLAGS="$MTKW_CXXFLAGS -DMTKW_WITH_GLOG"
   AC_LANG_PUSH([C++])
   AC_CHECK_HEADER([glog/logging.h],
-                  [use_glog=$withval],
+                  [],
                   [AC_MSG_ERROR([Can't find glog/logging.h. Please install google-glog.])])
   AC_LANG_POP([C++])
 fi
+AC_SUBST([MTKW_CXXFLAGS])
 
 # add some flags
 if test "x$CC" = "xgcc" -o "x$CC" = "xccache gcc"; then
@@ -60,6 +63,7 @@ fi
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile
+		 libmtkw.pc
 		 src/Makefile
 		 tests/Makefile
 		 ])

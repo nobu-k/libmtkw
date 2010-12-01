@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE@
+Description: libmtkw: Light-weighted profiler
+Version: @VERSION@
+Cflags: -I${includedir} @MTKW_CXXFLAGS@
+Libs: -L${libdir} -lmtkw
