@@ -1,5 +1,6 @@
 #include "manager.hpp"
 
+#include "profiler.hpp"
 #include "thread_local_storage.hpp"
 #include "thread_local_manager.hpp"
 
@@ -30,6 +31,12 @@ int Manager::initialize(ThreadLocalStorage* storage) {
   ist->_tls.reset(storage);
   _instance = ist;
   return 0;
+}
+
+int Manager::uninitializedCreate() {
+  LOG(WARNING) << "Call initialize() before calling instance(). "
+               << "libmtkw is initialized with the default configuration.";
+  return ::mtkw::initialize();
 }
 
 int Manager::resetThreadLocalStorage(ThreadLocalStorage* storage) {

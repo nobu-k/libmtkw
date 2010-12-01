@@ -18,6 +18,7 @@ private:
   ProfileStatistics _statistics;
 
 private:
+  static int uninitializedCreate();
   ThreadLocalManager* getTlsMgr() const;
 
 public:
@@ -37,7 +38,8 @@ public:
 
   static Manager& instance() {
     if (!_instance) {
-      assert(false && "initialize must be called before calling this function");
+      int res = uninitializedCreate();
+      assert(res == 0 && "Initialization failed.");
     }
     return *_instance;
   }
