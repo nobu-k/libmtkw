@@ -48,7 +48,7 @@ TEST(ProfilerTest, simple_profile) {
 
 #ifdef STATISTICAL_PROFILER_TEST
   ProfileStatistics st;
-  p1->getStatistics(st);
+  st.addAll(*p1);
   ASSERT_EQ(2, st.size());
 
   SingleProfileStatistics s;

@@ -16,6 +16,23 @@ class ProfileStatistics;
 // TODO: support thread_model of pfi::lang::shared_ptr
 typedef shared_ptr<Profile> ProfilePtr;
 
+struct Profile;
+class ProfileVisitor {
+public:
+  virtual ~ProfileVisitor() {}
+  virtual void visit(const Profile& profile) = 0;
+};
+
+/**
+ * @note This class has to traverse Profile by itself.
+ * This can be done by calling Profile::iterateSubprofiles.
+ */
+class ProfileTraversingVisitor {
+public:
+  virtual ~ProfileTraversingVisitor() {}
+  virtual void visit(const Profile& profile) = 0;
+};
+
 struct Profile {
   const std::string name;
   const bool generate_statistics;
@@ -30,7 +47,9 @@ struct Profile {
     : name(name), generate_statistics(gen_stat), start(0), end(0) {}
   double time() const { return end - start; }
 
-  void getStatistics(ProfileStatistics& statistics) const;
+  void accept(ProfileVisitor& visitor) const;
+  void accept(ProfileTraversingVisitor& visitor) const;
+  void iterateSubprofiles(ProfileTraversingVisitor& visitor) const;
   void simpleFormat(std::ostream& out,
                     const std::string& indent = "  ",
                     const std::string& initial_indent = "") const;
@@ -93,6 +112,7 @@ public:
    * @note This function does not add subprofiles of prof.
    */
   void add(const Profile& prof);
+  void addAll(const Profile& prof);
 
   int get(const std::string& name, SingleProfileStatistics& result) const;
   void getAll(std::map<std::string, SingleProfileStatistics>& result) const;

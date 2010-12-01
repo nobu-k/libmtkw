@@ -89,7 +89,7 @@ int Manager::endProfile() {
   // The last profile was the root. Update statistics.
   if (!mgr->getCurrentProfile()) {
     ProfilePtr ptr = mgr->getLastProfile();
-    if (ptr) ptr->getStatistics(_statistics);
+    if (ptr) _statistics.addAll(*ptr);
   }
   return 0;
 }
@@ -125,7 +125,7 @@ ProfilePtr Manager::getLastProfile() const {
 }
 
 void Manager::addStatistics(const ProfilePtr& p) {
-  p->getStatistics(_statistics);
+  if (p) _statistics.addAll(*p);
 }
 
 void Manager::clearStatistics() {

@@ -5,24 +5,53 @@
 
 namespace mtkw {
 
-void Profile::getStatistics(ProfileStatistics& statistics) const {
-  if (generate_statistics) statistics.add(*this);
+void Profile::accept(ProfileVisitor& visitor) const {
+  visitor.visit(*this);
   for (size_t i = 0; i < subprofiles.size(); i++) {
-    subprofiles[i]->getStatistics(statistics);
+    subprofiles[i]->accept(visitor);
   }
 }
+
+void Profile::accept(ProfileTraversingVisitor& visitor) const {
+  visitor.visit(*this);
+  // subprofiles are traversed by visitor
+}
+
+void Profile::iterateSubprofiles(ProfileTraversingVisitor& visitor) const {
+  for (size_t i = 0; i < subprofiles.size(); i++) {
+    subprofiles[i]->accept(visitor);
+  }
+}
+
+namespace {
+class SimpleFormattingVisitor : public ProfileTraversingVisitor {
+private:
+  std::ostream& _out;
+  const std::string& _indent_delta;
+  std::string _cur_indent;
+
+public:
+  SimpleFormattingVisitor(std::ostream& out, const std::string& delta,
+                          const std::string& cur)
+    : _out(out), _indent_delta(delta), _cur_indent(cur) {}
+
+  virtual void visit(const Profile& profile) {
+    _out << _cur_indent << profile.name;
+    _out << " (" << profile.time() << " sec)" << std::endl;
+
+    std::string prev_indent = _cur_indent;
+    _cur_indent += _indent_delta;
+    profile.iterateSubprofiles(*this);
+    _cur_indent = prev_indent;
+  }
+};
+} // namespace
 
 void Profile::simpleFormat(std::ostream& out,
                            const std::string& indent,
                            const std::string& initial_indent) const {
-  out << initial_indent << name;
-  out << " (" << time() << " sec)" << std::endl;
-
-  std::string next_indent = initial_indent;
-  next_indent += indent;
-  for (size_t i = 0; i < subprofiles.size(); i++) {
-    subprofiles[i]->simpleFormat(out, indent, next_indent);
-  }
+  SimpleFormattingVisitor v(out, indent, initial_indent);
+  accept(v);
 }
 
 std::string Profile::simpleFormat(const std::string& indent,
@@ -73,6 +102,19 @@ void ProfileStatistics::addImpl(Statistics& st, const Profile& prof) {
   st.stat.add(prof);
 }
 
+namespace {
+struct StatisticsProfileVisitor : public ProfileVisitor {
+private:
+  ProfileStatistics& _stat;
+
+public:
+  StatisticsProfileVisitor(ProfileStatistics& s) : _stat(s) {}
+  virtual void visit(const Profile& prof) {
+    _stat.add(prof);
+  }
+};
+} // namespace
+
 void ProfileStatistics::add(const Profile& prof) {
   { // check if name already exists
     thread::rlock lk(_mutex);
@@ -90,6 +132,11 @@ void ProfileStatistics::add(const Profile& prof) {
     thread::wlock lk(_mutex);
     addImpl(_statistics[prof.name], prof);
   }
+}
+
+void ProfileStatistics::addAll(const Profile& prof) {
+  StatisticsProfileVisitor v(*this);
+  prof.accept(v);
 }
 
 int ProfileStatistics::get(const std::string& name, SingleProfileStatistics& result) const {
