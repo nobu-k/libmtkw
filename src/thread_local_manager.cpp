@@ -36,7 +36,7 @@ int ThreadLocalManager::beginProfile(const std::string& name, bool gen_stat) {
   ProfilePtr new_prof(new Profile(name, gen_stat));
   if (!_profile) _profile.swap(new_prof);
   else {
-    new_prof->parent = _profile;
+    _profile_stack.push_back(_profile);
     _profile->subprofiles.push_back(new_prof);
     _profile = new_prof;
   }
@@ -53,12 +53,13 @@ int ThreadLocalManager::endProfile() {
   }
 
   _profile->end = currentTime();
-  if (_profile->isRoot()) {
+  if (_profile_stack.empty()) { // root
     _last_profile = _profile;
     _profile.reset();
 
   } else { // not root
-    _profile = _profile->parent;
+    _profile = _profile_stack.back();
+    _profile_stack.pop_back();
   }
   return 0;
 }

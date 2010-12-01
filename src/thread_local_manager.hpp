@@ -10,6 +10,7 @@ namespace mtkw {
 class ThreadLocalManager : noncopyable {
 private:
   bool _enabled;
+  std::vector<ProfilePtr> _profile_stack;
   ProfilePtr _profile;
   ProfilePtr _last_profile;
 

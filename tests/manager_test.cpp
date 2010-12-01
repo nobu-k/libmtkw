@@ -90,7 +90,6 @@ TYPED_TEST_P(ManagerTest, enable_while_profiling) {
   // test profile when enabled
   ASSERT_EQ(0, mgr->beginProfile("test2"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
   ASSERT_EQ("test2", mgr->getCurrentProfile()->name);
   ASSERT_NE(0, mgr->disable()); // cannot change
   ASSERT_NE(0, mgr->enable());
@@ -106,7 +105,6 @@ TYPED_TEST_P(ManagerTest, simple_profile) {
   // check basic condition
   ASSERT_EQ(0, mgr->beginProfile("P1"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
   EXPECT_EQ("P1", mgr->getCurrentProfile()->name);
   EXPECT_NE(0, mgr->getCurrentProfile()->start);
   EXPECT_EQ(0, mgr->getCurrentProfile()->end);
@@ -124,7 +122,6 @@ TYPED_TEST_P(ManagerTest, simple_profile) {
   ASSERT_EQ(0, mgr->endProfile());
   ASSERT_TRUE(!mgr->getCurrentProfile());
   ASSERT_FALSE(!mgr->getLastProfile());
-  ASSERT_TRUE(mgr->getLastProfile()->isRoot());
   ASSERT_TRUE(mgr->getLastProfile()->subprofiles.empty());
   ASSERT_NE(0, mgr->getLastProfile()->end);
   ASSERT_EQ("P1", mgr->getLastProfile()->name);
@@ -145,18 +142,15 @@ TYPED_TEST_P(ManagerTest, nested_profile) {
   // begin profiles
   ASSERT_EQ(0, mgr->beginProfile("P1"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
   ASSERT_EQ(0, mgr->setDebugLog("M1"));
 
   ASSERT_EQ(0, mgr->beginProfile("P2"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M2"));
 
   ASSERT_EQ(0, mgr->beginProfile("P3"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M3"));
 
@@ -179,14 +173,12 @@ TYPED_TEST_P(ManagerTest, nested_profile) {
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
-  EXPECT_TRUE(p1 == p2->parent);
   EXPECT_EQ("P2", p2->name);
   EXPECT_EQ("M2", p2->debug_log);
   ASSERT_EQ(1, p2->subprofiles.size());
 
   ProfilePtr p3 = p2->subprofiles[0];
   ASSERT_FALSE(!p3);
-  EXPECT_TRUE(p2 == p3->parent);
   EXPECT_EQ("P3", p3->name);
   EXPECT_EQ("M3", p3->debug_log);
   EXPECT_TRUE(p3->subprofiles.empty());
@@ -209,13 +201,11 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   // begin profiles
   ASSERT_EQ(0, mgr->beginProfile("P1"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_TRUE(mgr->getCurrentProfile()->isRoot());
   ASSERT_EQ(0, mgr->setDebugLog("M1"));
 
   // begin&end subprofiles P2
   ASSERT_EQ(0, mgr->beginProfile("P2"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M2"));
   ASSERT_EQ(0, mgr->endProfile()); // end P2
@@ -225,7 +215,6 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   // begin&end subprofiles P2
   ASSERT_EQ(0, mgr->beginProfile("P3"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_FALSE(mgr->getCurrentProfile()->isRoot());
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M3"));
   ASSERT_EQ(0, mgr->endProfile()); // end P3
@@ -245,14 +234,12 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
-  EXPECT_TRUE(p1 == p2->parent);
   EXPECT_EQ("P2", p2->name);
   EXPECT_EQ("M2", p2->debug_log);
   EXPECT_TRUE(p2->subprofiles.empty());
 
   ProfilePtr p3 = p1->subprofiles[1];
   ASSERT_FALSE(!p3);
-  EXPECT_TRUE(p1 == p3->parent);
   EXPECT_EQ("P3", p3->name);
   EXPECT_EQ("M3", p3->debug_log);
   EXPECT_TRUE(p3->subprofiles.empty());

@@ -22,13 +22,11 @@ TEST(ProfilerTest, simple_profile) {
   ASSERT_EQ(0, enable());
   MTKW_APROFILE_N("P1") {
     ASSERT_FALSE(!getCurrentProfile());
-    ASSERT_TRUE(getCurrentProfile()->isRoot());
     MTKW_DLOG() << "Red Bull";
     MTKW_DLOG() << " oisiidesu(^q^)";
 
     MTKW_APROFILE_N("P2") {
       ASSERT_FALSE(!getCurrentProfile());
-      ASSERT_FALSE(getCurrentProfile()->isRoot());
       MTKW_DLOG() << "hogehoge" << 1 << 2 << 3;
     }
     ASSERT_FALSE(!getCurrentProfile());
@@ -44,7 +42,6 @@ TEST(ProfilerTest, simple_profile) {
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
-  EXPECT_TRUE(p1 == p2->parent);
   EXPECT_EQ("P2", p2->name);
   EXPECT_EQ("hogehoge123", p2->debug_log);
   EXPECT_TRUE(p2->subprofiles.empty());
@@ -82,7 +79,6 @@ TEST(ProfilerTest, simple_function_profile) {
 
   ProfilePtr f = p->subprofiles[0];
   EXPECT_FALSE(!f);
-  EXPECT_TRUE(p == f->parent);
   EXPECT_FALSE(f->name.empty());
 }
 
@@ -126,14 +122,12 @@ TEST(ProfilerTest, nested) {
 
   ProfilePtr g = h->subprofiles[0];
   ASSERT_FALSE(!g);
-  EXPECT_TRUE(h == g->parent);
   EXPECT_EQ("g", g->name);
   EXPECT_EQ("Red Bull", g->debug_log);
   ASSERT_EQ(1, g->subprofiles.size());
 
   ProfilePtr f = g->subprofiles[0];
   ASSERT_FALSE(!f);
-  EXPECT_TRUE(g == f->parent);
   EXPECT_FALSE(f->name.empty());
   EXPECT_EQ("hoge", f->debug_log);
   EXPECT_TRUE(f->subprofiles.empty());

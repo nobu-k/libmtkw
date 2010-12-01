@@ -24,12 +24,10 @@ struct Profile {
 
   std::string debug_log;
 
-  ProfilePtr parent;
   std::vector<ProfilePtr> subprofiles;
 
   explicit Profile(const std::string& name, bool gen_stat = false)
     : name(name), generate_statistics(gen_stat), start(0), end(0) {}
-  bool isRoot() const { return !parent; }
   double time() const { return end - start; }
 
   void getStatistics(ProfileStatistics& statistics) const;
