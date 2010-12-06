@@ -53,8 +53,8 @@ int ThreadLocalManager::endProfile() {
   }
 
   _profile->end = currentTime();
+  _last_profile = _profile;
   if (_profile_stack.empty()) { // root
-    _last_profile = _profile;
     _profile.reset();
 
   } else { // not root

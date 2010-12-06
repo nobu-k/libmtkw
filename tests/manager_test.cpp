@@ -156,10 +156,10 @@ TYPED_TEST_P(ManagerTest, nested_profile) {
 
   // end profiles
   ASSERT_EQ(0, mgr->endProfile()); // end P3
-  ASSERT_TRUE(!mgr->getLastProfile());
+  ASSERT_FALSE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_EQ(0, mgr->endProfile()); // end P2
-  ASSERT_TRUE(!mgr->getLastProfile());
+  ASSERT_FALSE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
   ASSERT_EQ(0, mgr->endProfile()); // end P1
   ASSERT_FALSE(!mgr->getLastProfile()); // completely done
@@ -209,16 +209,16 @@ TYPED_TEST_P(ManagerTest, multi_subprofile) {
   ASSERT_TRUE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M2"));
   ASSERT_EQ(0, mgr->endProfile()); // end P2
-  ASSERT_TRUE(!mgr->getLastProfile());
+  ASSERT_FALSE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
 
   // begin&end subprofiles P2
   ASSERT_EQ(0, mgr->beginProfile("P3"));
   ASSERT_FALSE(!mgr->getCurrentProfile());
-  ASSERT_TRUE(!mgr->getLastProfile());
+  ASSERT_FALSE(!mgr->getLastProfile());
   ASSERT_EQ(0, mgr->setDebugLog("M3"));
   ASSERT_EQ(0, mgr->endProfile()); // end P3
-  ASSERT_TRUE(!mgr->getLastProfile());
+  ASSERT_FALSE(!mgr->getLastProfile());
   ASSERT_FALSE(!mgr->getCurrentProfile());
 
   // end P1
