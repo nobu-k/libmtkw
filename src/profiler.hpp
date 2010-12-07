@@ -52,19 +52,43 @@ public:
 
 } // namespace detail
 
+/**
+ * @brief Initialize libmtkw.
+ *
+ * @param enabled Indicating whether profiling mode is enabled or disabled.
+ * @param debug_mode Indicating whether debug mode is enabled or disabled.
+ *
+ * enabled and debug_mode will be passed to enable function.
+ */
 int initialize(bool enabled = false, bool debug_mode = true);
+
+/**
+ * @brief Enable/disable profiling and debug mode.
+ *
+ * @param enabled Indicating whether profiling mode is enabled or disabled.
+ * @param debug_mode Indicating whether debug mode is enabled or disabled.
+ */
 inline int enable(bool e = true, bool debug_mode = true) {
   return Manager::instance().enable(e, debug_mode);
 }
 
+/**
+ * @brief Disable profiling and debug mode.
+ */
 inline int disable() {
   return Manager::instance().disable();
 }
 
+/**
+ * @brief Get the profile of current profiling block.
+ */
 inline ProfilePtr getCurrentProfile() {
   return Manager::instance().getCurrentProfile();
 }
 
+/**
+ * @brief Get the profile of last profiling block.
+ */
 inline ProfilePtr getLastProfile() {
   return Manager::instance().getLastProfile();
 }
