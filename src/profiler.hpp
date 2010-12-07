@@ -118,7 +118,7 @@ inline ProfilePtr getLastProfile() {
 
 // information generation
 #define MTKW_INFO(key, value) \
-  ::mtkw::Manager::instance().setInformation(key, value);
+  if (!::mtkw::Manager::instance().isEnabled()) {} else ::mtkw::Manager::instance().setInformation(key, value)
 
 // debug utilities
 #define MTKW_DLOG() ::mtkw::detail::ProfilerDebugLogger()
