@@ -36,7 +36,7 @@ AC_ARG_ENABLE(pfi,
                 use_glog="yes"
               ],
               [
-	        LDFLAGS="$LDFLAGS -lboost_thread"
+	        LDFLAGS="$LDFLAGS -lboost_thread-mt"
 	      ])
 
 # Check glog
