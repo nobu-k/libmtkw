@@ -110,7 +110,7 @@ private:
 public:
   StatisticsProfileVisitor(ProfileStatistics& s) : _stat(s) {}
   virtual void visit(const Profile& prof) {
-    _stat.add(prof);
+    if (prof.generate_statistics) _stat.add(prof);
   }
 };
 } // namespace

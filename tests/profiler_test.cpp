@@ -34,6 +34,10 @@ TEST(ProfilerTest, simple_profile) {
       MTKW_DLOG() << "hogehoge" << 1 << 2 << 3;
       MTKW_INFO("hoge", "moge");
     }
+
+    // This profile will not be merged to statistics.
+    MTKW_PROFILE_N("P3") {
+    }
     ASSERT_FALSE(!getCurrentProfile());
   }
   ASSERT_TRUE(!getCurrentProfile());
@@ -48,7 +52,7 @@ TEST(ProfilerTest, simple_profile) {
   EXPECT_EQ("true", p1->information["TRUE"]);
   EXPECT_EQ("false", p1->information["FALSE"]);
   EXPECT_EQ("12345", p1->information["int"]);
-  ASSERT_EQ(1, p1->subprofiles.size());
+  ASSERT_EQ(2, p1->subprofiles.size());
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
@@ -57,6 +61,10 @@ TEST(ProfilerTest, simple_profile) {
   ASSERT_EQ(1, p2->information.size());
   EXPECT_EQ("moge", p2->information["hoge"]);
   EXPECT_TRUE(p2->subprofiles.empty());
+
+  ProfilePtr p3 = p1->subprofiles[1];
+  ASSERT_FALSE(!p3);
+  EXPECT_EQ("P3", p3->name);
 
 #ifdef STATISTICAL_PROFILER_TEST
   ProfileStatistics st;
@@ -69,6 +77,8 @@ TEST(ProfilerTest, simple_profile) {
 
   ASSERT_EQ(0, st.get("P2", s));
   EXPECT_EQ(1, s.called());
+
+  ASSERT_NE(0, st.get("P3", s));
 #endif
 }
 
