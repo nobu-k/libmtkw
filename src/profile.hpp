@@ -40,7 +40,7 @@ struct Profile {
   double end;
 
   std::string debug_log;
-
+  std::map<std::string, std::string> information;
   std::vector<ProfilePtr> subprofiles;
 
   explicit Profile(const std::string& name, bool gen_stat = false)

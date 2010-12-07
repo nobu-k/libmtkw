@@ -56,6 +56,24 @@ public:
   int appendProfile(const ProfilePtr& p);
   int setDebugLog(const std::string& msg);
   int appendDebugLog(const std::string& msg);
+  int setInformation(const std::string& key, const std::string& value);
+
+  /**
+   * @note For boolean
+   */
+  int setInformation(const std::string& key, bool value) {
+    // FIXME: remove redundant allocation
+    return setInformation(key, value ? "true" : "false");
+  }
+
+  /**
+   * @note For automatic conversion.
+   */
+  template<typename T>
+  int setInformation(const std::string& key,
+                     const T& value) {
+    return setInformation(key, lexical_cast<std::string>(value));
+  }
   ProfilePtr getCurrentProfile() const;
   ProfilePtr getLastProfile() const;
   //@}

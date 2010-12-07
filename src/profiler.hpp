@@ -93,6 +93,8 @@ inline ProfilePtr getLastProfile() {
 #define MTKW_PROFILE_FUNCTION() MTKW_SCOPED_SPROFILE()
 
 #define MTKW_DLOG() ::mtkw::detail::ProfilerDebugLogger()
+#define MTKW_INFO(key, value) \
+  ::mtkw::Manager::instance().setInformation(key, value);
 
 } // namespace mtkw
 

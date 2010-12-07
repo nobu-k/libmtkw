@@ -112,6 +112,12 @@ int Manager::appendDebugLog(const std::string& msg) {
   return mgr->appendDebugLog(msg);
 }
 
+int Manager::setInformation(const std::string& key, const std::string& value) {
+  ThreadLocalManager* mgr = getTlsMgr();
+  if (!mgr) return -1;
+  return mgr->setInformation(key, value);
+}
+
 ProfilePtr Manager::getCurrentProfile() const {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return ProfilePtr();

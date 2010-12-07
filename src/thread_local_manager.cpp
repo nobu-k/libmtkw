@@ -91,4 +91,13 @@ int ThreadLocalManager::appendDebugLog(const std::string& msg) {
   return 0;
 }
 
+int ThreadLocalManager::setInformation(const std::string& key, const std::string& value) {
+  if (!_profile) {
+    LOG(ERROR) << "No profile to append message";
+    return -1;
+  }
+  _profile->information[key] = value;
+  return 0;
+}
+
 } // namespace mtkw

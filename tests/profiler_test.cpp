@@ -24,10 +24,15 @@ TEST(ProfilerTest, simple_profile) {
     ASSERT_FALSE(!getCurrentProfile());
     MTKW_DLOG() << "Red Bull";
     MTKW_DLOG() << " oisiidesu(^q^)";
+    MTKW_INFO("key", "value");
+    MTKW_INFO("TRUE", true);
+    MTKW_INFO("FALSE", false);
+    MTKW_INFO("int", 12345);
 
     MTKW_APROFILE_N("P2") {
       ASSERT_FALSE(!getCurrentProfile());
       MTKW_DLOG() << "hogehoge" << 1 << 2 << 3;
+      MTKW_INFO("hoge", "moge");
     }
     ASSERT_FALSE(!getCurrentProfile());
   }
@@ -38,12 +43,19 @@ TEST(ProfilerTest, simple_profile) {
 
   EXPECT_EQ("P1", p1->name);
   EXPECT_EQ("Red Bull oisiidesu(^q^)", p1->debug_log);
+  ASSERT_EQ(4, p1->information.size());
+  EXPECT_EQ("value", p1->information["key"]);
+  EXPECT_EQ("true", p1->information["TRUE"]);
+  EXPECT_EQ("false", p1->information["FALSE"]);
+  EXPECT_EQ("12345", p1->information["int"]);
   ASSERT_EQ(1, p1->subprofiles.size());
 
   ProfilePtr p2 = p1->subprofiles[0];
   ASSERT_FALSE(!p2);
   EXPECT_EQ("P2", p2->name);
   EXPECT_EQ("hogehoge123", p2->debug_log);
+  ASSERT_EQ(1, p2->information.size());
+  EXPECT_EQ("moge", p2->information["hoge"]);
   EXPECT_TRUE(p2->subprofiles.empty());
 
 #ifdef STATISTICAL_PROFILER_TEST

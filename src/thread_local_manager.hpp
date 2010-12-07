@@ -32,6 +32,8 @@ public:
   int setDebugLog(const std::string& msg);
   int appendDebugLog(const std::string& msg);
 
+  int setInformation(const std::string& key, const std::string& value);
+
   ProfilePtr getCurrentProfile() const { return _profile; }
   ProfilePtr getLastProfile() const { return _last_profile; }
 };
