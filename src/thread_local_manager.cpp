@@ -6,18 +6,19 @@
 namespace mtkw {
 
 ThreadLocalManager::ThreadLocalManager()
-  : _enabled(false) {
+  : _enabled(false), _debug_mode(false) {
 }
 
 ThreadLocalManager::~ThreadLocalManager() {
 }
 
-int ThreadLocalManager::enable(bool e) {
+int ThreadLocalManager::enable(bool e, bool debug_mode) {
   if (_profile) {
     LOG(ERROR) << "Cannot modify 'enabled' flag while profiling.";
     return -1;
   }
   _enabled = e;
+  _debug_mode = _enabled ? debug_mode : false;
   return 0;
 }
 
@@ -27,11 +28,12 @@ int ThreadLocalManager::disable() {
     return -1;
   }
   _enabled = false;
+  _debug_mode = false;
   return 0;
 }
 
 int ThreadLocalManager::beginProfile(const std::string& name, bool gen_stat) {
-  if (!_enabled) return 0;
+  if (!isEnabled()) return 0;
 
   ProfilePtr new_prof(new Profile(name, gen_stat));
   if (!_profile) _profile.swap(new_prof);
@@ -46,7 +48,7 @@ int ThreadLocalManager::beginProfile(const std::string& name, bool gen_stat) {
 }
 
 int ThreadLocalManager::endProfile() {
-  if (!_enabled) return 0;
+  if (!isEnabled()) return 0;
   if (!_profile) {
     LOG(ERROR) << "No profile to end";
     return -1;
@@ -74,6 +76,7 @@ int ThreadLocalManager::appendProfile(const ProfilePtr& p) {
 }
 
 int ThreadLocalManager::setDebugLog(const std::string& msg) {
+  if (!isDebugMode()) return 0;
   if (!_profile) {
     LOG(ERROR) << "No profile to set message";
     return -1;
@@ -83,6 +86,7 @@ int ThreadLocalManager::setDebugLog(const std::string& msg) {
 }
 
 int ThreadLocalManager::appendDebugLog(const std::string& msg) {
+  if (!isDebugMode()) return 0;
   if (!_profile) {
     LOG(ERROR) << "No profile to append message";
     return -1;

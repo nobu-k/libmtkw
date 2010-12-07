@@ -4,11 +4,11 @@
 
 namespace mtkw {
 
-int initialize(bool enabled) {
+int initialize(bool enabled, bool debug_mode) {
   if (Manager::initialize(createDefaultThreadLocalStorage()) != 0) {
     return -1;
   }
-  return enable(enabled);
+  return enable(enabled, debug_mode);
 }
 
 } // namespace mtkw

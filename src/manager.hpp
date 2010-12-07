@@ -48,9 +48,10 @@ public:
    * @name Profiling functions
    */
   //@{
-  int enable(bool e = true);
+  int enable(bool e = true, bool debug_mode = true);
   int disable();
   bool isEnabled() const;
+  bool isDebugMode() const;
   int beginProfile(const std::string& name, bool gen_stat = false);
   int endProfile();
   int appendProfile(const ProfilePtr& p);

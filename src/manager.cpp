@@ -57,10 +57,10 @@ ThreadLocalManager* Manager::getTlsMgr() const {
   return mgr;
 }
 
-int Manager::enable(bool e) {
+int Manager::enable(bool e, bool debug_mode) {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
-  return mgr->enable(e);
+  return mgr->enable(e, debug_mode);
 }
 
 int Manager::disable() {
@@ -73,6 +73,12 @@ bool Manager::isEnabled() const {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return false;
   return mgr->isEnabled();
+}
+
+bool Manager::isDebugMode() const {
+  ThreadLocalManager* mgr = getTlsMgr();
+  if (!mgr) return false;
+  return mgr->isDebugMode();
 }
 
 int Manager::beginProfile(const std::string& name, bool gen_stat) {

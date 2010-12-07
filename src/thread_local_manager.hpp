@@ -10,6 +10,7 @@ namespace mtkw {
 class ThreadLocalManager : noncopyable {
 private:
   bool _enabled;
+  bool _debug_mode;
   std::vector<ProfilePtr> _profile_stack;
   ProfilePtr _profile;
   ProfilePtr _last_profile;
@@ -21,9 +22,10 @@ public:
   ThreadLocalManager();
   ~ThreadLocalManager();
 
-  int enable(bool e = true);
+  int enable(bool e = true, bool debug_mode = true);
   int disable();
   bool isEnabled() const { return _enabled; }
+  bool isDebugMode() const { return _enabled && _debug_mode; }
 
   int beginProfile(const std::string& name, bool gen_stat = false);
   int endProfile();

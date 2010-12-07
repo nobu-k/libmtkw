@@ -52,9 +52,9 @@ public:
 
 } // namespace detail
 
-int initialize(bool enabled = false);
-inline int enable(bool e = true) {
-  return Manager::instance().enable(e);
+int initialize(bool enabled = false, bool debug_mode = true);
+inline int enable(bool e = true, bool debug_mode = true) {
+  return Manager::instance().enable(e, debug_mode);
 }
 
 inline int disable() {
@@ -92,9 +92,14 @@ inline ProfilePtr getLastProfile() {
 // for functions
 #define MTKW_PROFILE_FUNCTION() MTKW_SCOPED_SPROFILE()
 
-#define MTKW_DLOG() ::mtkw::detail::ProfilerDebugLogger()
+// information generation
 #define MTKW_INFO(key, value) \
   ::mtkw::Manager::instance().setInformation(key, value);
+
+// debug utilities
+#define MTKW_DLOG() ::mtkw::detail::ProfilerDebugLogger()
+#define MTKW_DEBUG() \
+  if (!::mtkw::Manager::instance().isDebugMode()) {} else
 
 } // namespace mtkw
 
