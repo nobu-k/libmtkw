@@ -58,6 +58,9 @@ struct Profile {
   explicit Profile(const std::string& name, bool gen_stat = false)
     : name(name), generate_statistics(gen_stat), start(0), end(0) {}
 
+  bool hasInformation() const { return !information.empty(); }
+  bool hasSubprofiles() const { return !subprofiles.empty(); }
+
   /**
    * @brief Returns the time consumed by this profile.
    */
