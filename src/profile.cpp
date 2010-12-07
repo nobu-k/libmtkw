@@ -150,14 +150,14 @@ int ProfileStatistics::get(const std::string& name, SingleProfileStatistics& res
   return 0;
 }
 
-void ProfileStatistics::getAll(std::map<std::string, SingleProfileStatistics>& result) const {
+void ProfileStatistics::getAll(std::map<std::string, SingleProfileStatistics>& results) const {
   thread::rlock lk(_mutex);
   StatisticsMap::const_iterator it = _statistics.begin(), end = _statistics.end();
   for (; it != end; ++it) {
     const std::string& name = it->first;
     const Statistics& st = it->second;
     thread::rlock stlk(st.mutex);
-    result[name] = st.stat;
+    results[name] = st.stat;
   }
 }
 

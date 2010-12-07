@@ -138,4 +138,12 @@ void Manager::clearStatistics() {
   _statistics.clear();
 }
 
+int Manager::getStatistics(const std::string& name, SingleProfileStatistics& result) const {
+  return _statistics.get(name, result);
+}
+
+void Manager::getAllStatistics(std::map<std::string, SingleProfileStatistics>& results) const {
+  _statistics.getAll(results);
+}
+
 } // namespace mtkw

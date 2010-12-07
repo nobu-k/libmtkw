@@ -115,7 +115,7 @@ public:
   void addAll(const Profile& prof);
 
   int get(const std::string& name, SingleProfileStatistics& result) const;
-  void getAll(std::map<std::string, SingleProfileStatistics>& result) const;
+  void getAll(std::map<std::string, SingleProfileStatistics>& results) const;
 
   void clear();
 };

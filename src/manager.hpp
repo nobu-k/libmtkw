@@ -78,13 +78,16 @@ public:
   ProfilePtr getLastProfile() const;
   //@}
 
+  // TODO: Is simply returing const ProfileStatistics& is better?
   /**
    * @name Statistics functions
    */
   //@{
   void addStatistics(const ProfilePtr& p);
   void clearStatistics();
-  // TODO: add function to generate statistics for a single profile
+
+  int getStatistics(const std::string& name, SingleProfileStatistics& result) const;
+  void getAllStatistics(std::map<std::string, SingleProfileStatistics>& results) const;
   //@}
 };
 
