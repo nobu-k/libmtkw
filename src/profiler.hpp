@@ -85,6 +85,20 @@ inline int disable() {
 }
 
 /**
+ * @brief Is libmtkw enabled for caller's thread?
+ */
+inline bool isEnabled() {
+  return Manager::instance().isEnabled();
+}
+
+/**
+ * @biref Is caller's thread debug mode?
+ */
+inline bool isDebugMode() {
+  return Manager::instance().isDebugMode();
+}
+
+/**
  * @brief Get the profile of current profiling block.
  */
 inline ProfilePtr getCurrentProfile() {

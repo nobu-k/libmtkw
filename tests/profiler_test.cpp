@@ -20,6 +20,8 @@ namespace mtkw {
 
 TEST(ProfilerTest, simple_profile) {
   ASSERT_EQ(0, enable());
+  ASSERT_TRUE(isEnabled());
+
   MTKW_APROFILE_N("P1") {
     ASSERT_FALSE(!getCurrentProfile());
     MTKW_DLOG() << "Red Bull";

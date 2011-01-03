@@ -7,6 +7,8 @@ namespace mtkw {
 TEST(DebugModeTest, default_configuration) {
   bool debug = false;
   enable(true, true);
+  ASSERT_TRUE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
@@ -16,6 +18,8 @@ TEST(DebugModeTest, default_configuration) {
 TEST(DebugModeTest, debug_mode) {
   bool debug = false;
   enable(true, true);
+  ASSERT_TRUE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
@@ -25,6 +29,8 @@ TEST(DebugModeTest, debug_mode) {
 TEST(DebugModeTest, non_debug_mode) {
   bool debug = false;
   enable(true, false);
+  ASSERT_FALSE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
@@ -34,6 +40,8 @@ TEST(DebugModeTest, non_debug_mode) {
 TEST(DebugModeTest, disabled_debug_mode) {
   bool debug = false;
   enable(false, true);
+  ASSERT_FALSE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
@@ -43,6 +51,8 @@ TEST(DebugModeTest, disabled_debug_mode) {
 TEST(DebugModeTest, disabled_all) {
   bool debug = false;
   enable(false, false);
+  ASSERT_FALSE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
@@ -52,7 +62,10 @@ TEST(DebugModeTest, disabled_all) {
 TEST(DebugModeTest, disable_after_enable) {
   bool debug = false;
   enable(true, true);
+  ASSERT_TRUE(isDebugMode());
   disable();
+  ASSERT_FALSE(isDebugMode());
+
   MTKW_DEBUG() {
     debug = true;
   }
