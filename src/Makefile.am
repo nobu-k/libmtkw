@@ -22,6 +22,8 @@ libmtkw_la_SOURCES = \
   time.hpp \
   time.cpp \
   util.hpp \
+  env.hpp \
+  env.cpp \
   thread.hpp
 
 libmtkw_la_CXXFLAGS =

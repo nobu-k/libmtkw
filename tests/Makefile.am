@@ -3,7 +3,8 @@ check_PROGRAMS = \
   profiler.test \
   statistical_profiler.test \
   default_initialization.test \
-  debug_mode.test
+  debug_mode.test \
+  env.test
 
 manager_test_SOURCES = \
   manager_test.cpp
@@ -38,6 +39,13 @@ debug_mode_test_SOURCES = \
 debug_mode_test_CXXFLAGS = \
   -I$(top_srcdir)/src
 debug_mode_test_LDADD = \
+  -lgtest_main $(top_builddir)/src/libmtkw.la
+
+env_test_SOURCES = \
+  env_test.cpp
+env_test_CXXFLAGS = \
+  -I$(top_srcdir)/src
+env_test_LDADD = \
   -lgtest_main $(top_builddir)/src/libmtkw.la
 
 TESTS = $(check_PROGRAMS)

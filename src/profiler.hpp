@@ -53,6 +53,11 @@ public:
 } // namespace detail
 
 /**
+ * @brief Initialize libmtkw by environment variables.
+ */
+int initialize();
+
+/**
  * @brief Initialize libmtkw.
  *
  * @param enabled Indicating whether profiling mode is enabled or disabled.
@@ -60,7 +65,7 @@ public:
  *
  * enabled and debug_mode will be passed to enable function.
  */
-int initialize(bool enabled = false, bool debug_mode = true);
+int initialize(bool enabled, bool debug_mode = true);
 
 /**
  * @brief Enable/disable profiling and debug mode.
