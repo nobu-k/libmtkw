@@ -6,6 +6,7 @@ libmtkw_la_include_HEADERS = \
   profiler.hpp \
   manager.hpp \
   util.hpp \
+  flags.hpp \
   thread.hpp
 
 libmtkw_la_SOURCES = \

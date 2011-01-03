@@ -4,13 +4,13 @@
 #include <string>
 #include "util.hpp"
 #include "profile.hpp"
+#include "flags.hpp"
 
 namespace mtkw {
 
 class ThreadLocalManager : noncopyable {
 private:
-  bool _enabled;
-  bool _debug_mode;
+  Flags _flags;
   std::vector<ProfilePtr> _profile_stack;
   ProfilePtr _profile;
   ProfilePtr _last_profile;
@@ -19,13 +19,14 @@ private:
   ProfilePtr& getCurrentProfile(const std::string& root_name);
 
 public:
-  ThreadLocalManager();
+  explicit ThreadLocalManager(const Flags& flags);
   ~ThreadLocalManager();
 
   int enable(bool e = true, bool debug_mode = true);
   int disable();
-  bool isEnabled() const { return _enabled; }
-  bool isDebugMode() const { return _enabled && _debug_mode; }
+  int setFlags(const Flags& flags);
+  bool isEnabled() const { return _flags.enabled; }
+  bool isDebugMode() const { return _flags.enabled && _flags.debug_mode; }
 
   int beginProfile(const std::string& name, bool gen_stat = false);
   int endProfile();

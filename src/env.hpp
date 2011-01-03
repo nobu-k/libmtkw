@@ -4,6 +4,8 @@
 #include <string>
 
 namespace mtkw {
+struct Flags;
+
 namespace env {
 
 /**
@@ -32,6 +34,13 @@ int getBoolean(const std::string& key, bool& res);
  * @param debug_mode The debug-flag will be stored to this argument.
  */
 void getFlags(bool& enabled, bool& debug_mode);
+
+/**
+ * @brief Get all flags of libmtkw
+ *
+ * @param flags All flags will be stored to this argument.
+ */
+void getFlags(Flags& flags);
 
 /**
  * @brief Get enabled-flag.

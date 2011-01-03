@@ -4,10 +4,16 @@
 namespace mtkw {
 
 class ThreadLocalManager;
+struct Flags;
 
 class ThreadLocalStorage {
 public:
   virtual ~ThreadLocalStorage() {}
+
+  /**
+   * @note This function must be thread-safe.
+   */
+  virtual void setDefaultFlags(const Flags& default_flags) = 0;
   virtual ThreadLocalManager* get() = 0;
 };
 

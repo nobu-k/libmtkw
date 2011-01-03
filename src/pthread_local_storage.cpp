@@ -2,11 +2,16 @@
 
 #include <pthread.h>
 #include "thread_local_manager.hpp"
+#include "thread.hpp"
+#include "flags.hpp"
 
 namespace mtkw {
 
 struct PthreadLocalStorage::Pimpl {
   pthread_key_t tls_key;
+
+  thread::rw_mutex flags_lock;
+  Flags default_flags;
 };
 
 PthreadLocalStorage::PthreadLocalStorage() : _pimpl(NULL) {
@@ -19,6 +24,16 @@ PthreadLocalStorage::~PthreadLocalStorage() {
   }
 }
 
+void PthreadLocalStorage::setDefaultFlags(const Flags& default_flags) {
+  if (!_pimpl) {
+    LOG(ERROR) << "PthreadLocalStorage is not initialized yet.";
+    return;
+  }
+
+  thread::wlock lk(_pimpl->flags_lock);
+  _pimpl->default_flags = default_flags;
+}
+
 ThreadLocalManager* PthreadLocalStorage::get() {
   if (!_pimpl) {
     LOG(ERROR) << "PthreadLocalStorage is not initialized yet.";
@@ -29,7 +44,10 @@ ThreadLocalManager* PthreadLocalStorage::get() {
   ThreadLocalManager* ptr =
     static_cast<ThreadLocalManager*>(pthread_getspecific(_pimpl->tls_key));
   if (!ptr) {
-    ptr = new ThreadLocalManager();
+    {
+      thread::rlock lk(_pimpl->flags_lock);
+      ptr = new ThreadLocalManager(_pimpl->default_flags);
+    }
     if (pthread_setspecific(_pimpl->tls_key, ptr) != 0) {
       delete ptr;
       LOG(ERROR) << "pthread_setspecific failed";

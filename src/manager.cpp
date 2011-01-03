@@ -14,7 +14,8 @@ Manager::Manager() {
 Manager::~Manager() {
 }
 
-int Manager::initialize(ThreadLocalStorage* storage) {
+int Manager::initialize(ThreadLocalStorage* storage,
+                        const Flags& default_flags) {
   if (!storage) {
     LOG(ERROR) << "storage is NULL.";
     return -1;
@@ -29,6 +30,7 @@ int Manager::initialize(ThreadLocalStorage* storage) {
 
   Manager* ist = new Manager();
   ist->_tls.reset(storage);
+  ist->_tls->setDefaultFlags(default_flags);
   _instance = ist;
   return 0;
 }
@@ -67,6 +69,16 @@ int Manager::disable() {
   ThreadLocalManager* mgr = getTlsMgr();
   if (!mgr) return -1;
   return mgr->disable();
+}
+
+int Manager::setFlags(const Flags& flags) {
+  ThreadLocalManager* mgr = getTlsMgr();
+  if (!mgr) return -1;
+  return mgr->setFlags(flags);
+}
+
+void Manager::setDefaultFlags(const Flags& flags) {
+  _tls->setDefaultFlags(flags);
 }
 
 bool Manager::isEnabled() const {

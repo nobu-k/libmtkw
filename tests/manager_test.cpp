@@ -15,7 +15,7 @@ template<>
 void initializeManager<ThreadLocalManager>() {}
 template<>
 ThreadLocalManager* createManager<ThreadLocalManager>() {
-  return new ThreadLocalManager();
+  return new ThreadLocalManager(Flags());
 }
 template<>
 void destroyManager<ThreadLocalManager>(ThreadLocalManager* mgr) {
@@ -25,7 +25,7 @@ void destroyManager<ThreadLocalManager>(ThreadLocalManager* mgr) {
 template<>
 void initializeManager<Manager>() {
   ThreadLocalStorage* storage = createDefaultThreadLocalStorage();
-  Manager::initialize(storage);
+  Manager::initialize(storage, Flags());
 }
 template<>
 Manager* createManager<Manager>() {

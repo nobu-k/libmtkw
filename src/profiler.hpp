@@ -67,6 +67,8 @@ int initialize();
  */
 int initialize(bool enabled, bool debug_mode = true);
 
+int initialize(const Flags& flags);
+
 /**
  * @brief Enable/disable profiling and debug mode.
  *

@@ -15,6 +15,7 @@ public:
   PthreadLocalStorage();
   virtual ~PthreadLocalStorage();
 
+  virtual void setDefaultFlags(const Flags& default_flags);
   virtual ThreadLocalManager* get();
 
   /**

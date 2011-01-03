@@ -5,8 +5,8 @@
 
 namespace mtkw {
 
-ThreadLocalManager::ThreadLocalManager()
-  : _enabled(false), _debug_mode(false) {
+ThreadLocalManager::ThreadLocalManager(const Flags& flags) {
+  setFlags(flags);
 }
 
 ThreadLocalManager::~ThreadLocalManager() {
@@ -17,8 +17,8 @@ int ThreadLocalManager::enable(bool e, bool debug_mode) {
     LOG(ERROR) << "Cannot modify 'enabled' flag while profiling.";
     return -1;
   }
-  _enabled = e;
-  _debug_mode = _enabled ? debug_mode : false;
+  _flags.enabled = e;
+  _flags.debug_mode = _flags.enabled ? debug_mode : false;
   return 0;
 }
 
@@ -27,9 +27,13 @@ int ThreadLocalManager::disable() {
     LOG(ERROR) << "Cannot modify 'enabled' flag while profiling.";
     return -1;
   }
-  _enabled = false;
-  _debug_mode = false;
+  _flags.enabled = false;
+  _flags.debug_mode = false;
   return 0;
+}
+
+int ThreadLocalManager::setFlags(const Flags& flags) {
+  return enable(flags.enabled, flags.debug_mode);
 }
 
 int ThreadLocalManager::beginProfile(const std::string& name, bool gen_stat) {

@@ -4,6 +4,7 @@
 #include <cassert>
 #include "util.hpp"
 #include "profile.hpp"
+#include "flags.hpp"
 
 namespace mtkw {
 
@@ -28,7 +29,8 @@ public:
    * @note Call this function before calling instance().
    * @note ThreadLocalStorage* will automatically be deleted.
    */
-  static int initialize(ThreadLocalStorage* storage);
+  static int initialize(ThreadLocalStorage* storage,
+                        const Flags& default_flags);
 
   /**
    * @note This function is only for test codes.
@@ -50,6 +52,8 @@ public:
   //@{
   int enable(bool e = true, bool debug_mode = true);
   int disable();
+  int setFlags(const Flags& flags);
+  void setDefaultFlags(const Flags& default_flags);
   bool isEnabled() const;
   bool isDebugMode() const;
   int beginProfile(const std::string& name, bool gen_stat = false);

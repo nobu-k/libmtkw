@@ -2,22 +2,28 @@
 
 #include <cstdlib>
 #include "thread_local_storage.hpp"
+#include "flags.hpp"
 #include "env.hpp"
 
 namespace mtkw {
 
 int initialize() {
-  bool enabled = false;
-  bool debug_mode = true;
-  env::getFlags(enabled, debug_mode);
-  return initialize(enabled, debug_mode);
+  Flags flags;
+  flags.enabled = false;
+  flags.debug_mode = true;
+  env::getFlags(flags);
+  return initialize(flags);
 }
 
 int initialize(bool enabled, bool debug_mode) {
-  if (Manager::initialize(createDefaultThreadLocalStorage()) != 0) {
-    return -1;
-  }
-  return enable(enabled, debug_mode);
+  Flags flags;
+  flags.enabled = false;
+  flags.debug_mode = false;
+  return initialize(flags);
+}
+
+int initialize(const Flags& flags) {
+  return Manager::initialize(createDefaultThreadLocalStorage(), flags);
 }
 
 } // namespace mtkw

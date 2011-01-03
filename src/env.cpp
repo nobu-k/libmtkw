@@ -1,6 +1,7 @@
 #include "env.hpp"
 
 #include <cstdlib>
+#include "flags.hpp"
 
 namespace mtkw {
 namespace env {
@@ -26,6 +27,11 @@ int getBoolean(const std::string& key, bool& res) {
 void getFlags(bool& enabled, bool& debug_mode) {
   getEnabledFlag(enabled);
   getDebugFlag(debug_mode);
+}
+
+void getFlags(Flags& flags) {
+  getEnabledFlag(flags.enabled);
+  getDebugFlag(flags.debug_mode);
 }
 
 int getEnabledFlag(bool& enabled) {
