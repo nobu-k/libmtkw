@@ -17,8 +17,8 @@ int initialize() {
 
 int initialize(bool enabled, bool debug_mode) {
   Flags flags;
-  flags.enabled = false;
-  flags.debug_mode = false;
+  flags.enabled = enabled;
+  flags.debug_mode = debug_mode;
   return initialize(flags);
 }
 
